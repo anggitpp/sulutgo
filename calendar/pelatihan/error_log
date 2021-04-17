@@ -1,0 +1,42 @@
+[04-Feb-2021 01:14:09 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287
+[09-Feb-2021 14:07:33 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287
+[11-Feb-2021 01:10:36 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287
+[11-Feb-2021 01:10:56 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287
+[16-Feb-2021 04:13:55 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287
+[11-Mar-2021 05:05:41 UTC] PHP Fatal error:  Uncaught InvalidArgumentException: Unsupported driver []. in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php:287
+Stack trace:
+#0 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(76): Illuminate\Database\Connectors\ConnectionFactory->createConnection(NULL, Object(Closure), NULL, '', Array)
+#1 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php(50): Illuminate\Database\Connectors\ConnectionFactory->createSingleConnection(Array)
+#2 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(131): Illuminate\Database\Connectors\ConnectionFactory->make(Array, 'default')
+#3 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/DatabaseManager.php(86): Illuminate\Database\DatabaseManager->makeConnection('default')
+#4 /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Capsule/Manager.php(109): Illuminate\Database\DatabaseManager->connection('d in /home/sinergic/public_html/sulutgo/vendor/illuminate/database/Connectors/ConnectionFactory.php on line 287

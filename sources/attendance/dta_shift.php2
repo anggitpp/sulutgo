@@ -1,0 +1,295 @@
+<?php
+	if(!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";		
+	
+	function hapus(){
+		global $s,$inp,$par,$cUsername;				
+		$sql="delete from dta_shift where idShift='$par[idShift]'";
+		db($sql);		
+		echo "<script>window.location='?".getPar($par,"mode,idShift")."';</script>";
+	}
+		
+	function ubah(){
+		global $s,$inp,$par,$cUsername;
+		repField();				
+		$sql="update dta_shift set idLokasi='$inp[idLokasi]', kodeShift='$inp[kodeShift]', namaShift='$inp[namaShift]', groupShift='$inp[groupShift]', mulaiShift='$inp[mulaiShift]', selesaiShift='$inp[selesaiShift]', mulaiShift_istirahat='$inp[mulaiShift_istirahat]', selesaiShift_istirahat='$inp[selesaiShift_istirahat]', lemburShift='".setAngka($inp[lemburShift])."', keteranganShift='$inp[keteranganShift]', flagShift='$inp[flagShift]', statusShift='$inp[statusShift]', updateBy='$cUsername', updateTime='".date('Y-m-d H:i:s')."' where idShift='$par[idShift]'";
+		db($sql);
+		
+		echo "<script>closeBox();reloadPage();</script>";
+	}
+	
+	function tambah(){
+		global $s,$inp,$par,$cUsername;				
+		repField();				
+		$idShift = getField("select idShift from dta_shift order by idShift desc limit 1")+1;		
+		
+		$sql="insert into dta_shift (idShift, idLokasi, kodeShift, namaShift, groupShift, mulaiShift, selesaiShift, mulaiShift_istirahat, selesaiShift_istirahat, lemburShift, jumlahShift, keteranganShift, flagShift, statusShift, createBy, createTime) values ('$idShift', '$inp[idLokasi]', '$inp[kodeShift]', '$inp[namaShift]', '$inp[groupShift]', '$inp[mulaiShift]', '$inp[selesaiShift]', '$inp[mulaiShift_istirahat]', '$inp[selesaiShift_istirahat]', '".setAngka($inp[lemburShift])."', '20', '$inp[keteranganShift]', '$inp[flagShift]', '$inp[statusShift]', '$cUsername', '".date('Y-m-d H:i:s')."')";
+		db($sql);		
+		
+		echo "<script>closeBox();reloadPage();</script>";
+	}
+		
+	function form(){
+		global $s,$inp,$par,$arrTitle,$arrParameter,$menuAccess;
+		
+		if($par[mode] == "edit"){
+			$sql="select * from dta_shift where idShift='$par[idShift]'";
+			$res=db($sql);
+			$r=mysql_fetch_array($res);
+		}
+				
+		$false =  $r[statusShift] == "f" ? "checked=\"checked\"" : "";		
+		$true =  empty($false) ? "checked=\"checked\"" : "";
+		$flagShift = $r[flagShift] == 1 ? "checked=\"checked\"" : "";
+		
+		setValidation("is_null","inp[kodeShift]","anda harus mengisi kode");
+		setValidation("is_null","mulaiShift","anda harus mengisi mulai");
+		setValidation("is_null","selesaiShift","anda harus mengisi selesai");
+		setValidation("is_null","mulaiShift_istirahat","anda harus mengisi mulai istirahat");
+		setValidation("is_null","selesaiShift_istirahat","anda harus mengisi selesai istirahat");
+		setValidation("is_null","inp[lemburShift]","anda harus mengisi lembur otomatis");		
+		setValidation("is_null","inp[keteranganShift]","anda harus mengisi keterangan");		
+		$text = getValidation();
+
+		$text.="<div class=\"centercontent contentpopup\">
+				<div class=\"pageheader\">
+					<h1 class=\"pagetitle\">".$arrTitle[$s]."</h1>
+					".getBread(ucwords($par[mode]." data"))."								
+				</div>
+				<div class=\"contentwrapper\">
+				<form id=\"form\" name=\"form\" method=\"post\" class=\"stdform\" action=\"?_submit=1".getPar($par)."\" onsubmit=\"return validation(document.form);\" enctype=\"multipart/form-data\">	
+				<div id=\"general\" class=\"subcontent\" >	
+					<p>
+						<label class=\"l-input-small\">Lokasi Kerja</label>
+						<div class=\"field\">
+							".comboData("select * from mst_data where statusData='t' and kodeCategory='".$arrParameter[7]."' order by urutanData","kodeData","namaData","inp[idLokasi]","ALL",$r[idLokasi],"", "310px")."
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Nama</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[namaShift]\" name=\"inp[namaShift]\"  value=\"$r[namaShift]\" class=\"mediuminput\" style=\"width:300px;\" maxlength=\"150\"/>
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Kode</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[kodeShift]\" name=\"inp[kodeShift]\"  value=\"$r[kodeShift]\" class=\"mediuminput\" style=\"width:75px;\" maxlength=\"30\"/>
+						</div>
+					</p>
+					<table width=\"100%\">
+					<tr>
+					<td style=\" width:50%; padding-right:20px;\">
+						<div class=\"widgetbox\">
+							<div class=\"title\" style=\"margin-bottom:-10px;\"><h3>Jadwal Kerja</h3></div>
+						</div>
+						<p>
+							<label class=\"l-input-small\" style=\"width:160px;\">Mulai</label>
+							<div class=\"field\">								
+								<input type=\"text\" id=\"mulaiShift\" name=\"inp[mulaiShift]\" size=\"10\" maxlength=\"5\" value=\"".substr($r[mulaiShift],0,5)."\" class=\"vsmallinput hasTimePicker\" style=\"background: url(styles/images/icons/time.png) no-repeat left; padding-left:30px; width:50px;\" readonly=\"readonly\"/>
+							</div>
+						</p>
+						<p>
+							<label class=\"l-input-small\" style=\"width:160px;\">Selesai</label>
+							<div class=\"field\">								
+								<input type=\"text\" id=\"selesaiShift\" name=\"inp[selesaiShift]\" size=\"10\" maxlength=\"5\" value=\"".substr($r[selesaiShift],0,5)."\" class=\"vsmallinput hasTimePicker\" style=\"background: url(styles/images/icons/time.png) no-repeat left; padding-left:30px; width:50px;\" readonly=\"readonly\"/>
+							</div>
+						</p>					
+					</td>
+					<td style=\"width:50%; padding-left:20px;\">
+						<div class=\"widgetbox\">
+							<div class=\"title\" style=\"margin-bottom:-10px;\"><h3>Jadwal Istirahat</h3></div>
+						</div>
+						<p>
+							<label class=\"l-input-small\" style=\"width:160px;\">Mulai</label>
+							<div class=\"field\">								
+								<input type=\"text\" id=\"mulaiShift_istirahat\" name=\"inp[mulaiShift_istirahat]\" size=\"10\" maxlength=\"5\" value=\"".substr($r[mulaiShift_istirahat],0,5)."\" class=\"vsmallinput hasTimePicker\" style=\"background: url(styles/images/icons/time.png) no-repeat left; padding-left:30px; width:50px;\" readonly=\"readonly\"/>
+							</div>
+						</p>
+						<p>
+							<label class=\"l-input-small\" style=\"width:160px;\">Selesai</label>
+							<div class=\"field\">								
+								<input type=\"text\" id=\"selesaiShift_istirahat\" name=\"inp[selesaiShift_istirahat]\" size=\"10\" maxlength=\"5\" value=\"".substr($r[selesaiShift_istirahat],0,5)."\" class=\"vsmallinput hasTimePicker\" style=\"background: url(styles/images/icons/time.png) no-repeat left; padding-left:30px; width:50px;\" readonly=\"readonly\"/>
+							</div>
+						</p>		
+					</td>
+					</tr>
+					</table>
+					<p>
+						<label class=\"l-input-small\">Lembur Otomatis</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[lemburShift]\" name=\"inp[lemburShift]\"  value=\"".getAngka($r[lemburShift])."\" class=\"mediuminput\" style=\"width:75px; text-align:right\" onkeyup=\"cekAngka(this);\"/> Jam
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Keterangan</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[keteranganShift]\" name=\"inp[keteranganShift]\"  value=\"$r[keteranganShift]\" class=\"mediuminput\" style=\"width:300px;\"/>
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Group</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[groupShift]\" name=\"inp[groupShift]\"  value=\"$r[groupShift]\" class=\"mediuminput\" style=\"width:75px;\" maxlength=\"30\"/>
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Hari Jum'at ?</label>
+						<div class=\"fradio\">
+							<input type=\"checkbox\" id=\"inp[flagShift]\" name=\"inp[flagShift]\" value=\"1\" $flagShift />
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Status</label>
+						<div class=\"fradio\">
+							<input type=\"radio\" id=\"true\" name=\"inp[statusShift]\" value=\"t\" $true /> <span class=\"sradio\">Aktif</span>
+							<input type=\"radio\" id=\"false\" name=\"inp[statusShift]\" value=\"f\" $false /> <span class=\"sradio\">Tidak Aktif</span>
+						</div>
+					</p>
+				</div>
+				<p>
+					<input type=\"submit\" class=\"submit radius2\" name=\"btnSimpan\" value=\"Simpan\"/>
+					<input type=\"button\" class=\"cancel radius2\" value=\"Batal\" onclick=\"closeBox();\"/>
+				</p>
+			</form>	
+			</div>";
+		return $text;
+	}
+
+	function lihat(){
+		global $s,$inp,$par,$arrTitle,$arrParameter,$menuAccess;
+		$cols = 10;
+		$cols = (isset($menuAccess[$s]["edit"]) || isset($menuAccess[$s]["delete"])) ? $cols : $cols-1;
+		$text = table($cols, array($cols-1, $cols));
+		
+		$text.="<div class=\"pageheader\">
+				<h1 class=\"pagetitle\">".$arrTitle[$s]."</h1>
+				".getBread()."
+				
+			</div>    		
+			<div id=\"contentwrapper\" class=\"contentwrapper\">
+			<form action=\"\" method=\"post\" class=\"stdform\" onsubmit=\"return false;\">
+			<div id=\"pos_l\" style=\"float:left;\">
+			<p>					
+				<input type=\"text\" id=\"fSearch\" name=\"fSearch\" value=\"".$par[filterData]."\" style=\"width:200px;\"/>
+			</p>
+			</div>
+			<div id=\"pos_r\">";
+		if(isset($menuAccess[$s]["add"])) $text.="<a href=\"#Add\" class=\"btn btn1 btn_document\" onclick=\"openBox('popup.php?par[mode]=add".getPar($par,"mode,idShift")."',875,550);\"><span>Tambah Data</span></a>";
+		$text.="</div>
+			</form>
+			<br clear=\"all\" />
+			<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stdtable stdtablequick\" id=\"dataList\">
+			<thead>
+				<tr>
+					<th rowspan=\"2\" width=\"20\" style=\"vertical-align:middle;\">No.</th>
+					<th rowspan=\"2\" style=\"min-width:150px; vertical-align:middle;\">Lokasi Kerja</th>
+					<th rowspan=\"2\" style=\"min-width:150px; vertical-align:middle;\">Nama</th>
+					<th rowspan=\"2\" width=\"100\" style=\"vertical-align:middle;\">Kode</th>
+					<th colspan=\"2\" style=\"vertical-align:middle;\">Jam</th>
+					<th rowspan=\"2\" style=\"min-width:150px; vertical-align:middle;\">Keterangan</th>
+					<th rowspan=\"2\" width=\"50\" style=\"vertical-align:middle;\">Group</th>
+					<th rowspan=\"2\" width=\"50\" style=\"vertical-align:middle;\">Status</th>";
+				if(isset($menuAccess[$s]["edit"]) || isset($menuAccess[$s]["delete"])) $text.="<th rowspan=\"2\" width=\"50\">Kontrol</th>";
+		$text.="</tr>
+				<tr>
+					<th width=\"100\" style=\"vertical-align:middle;\">Masuk</th>
+					<th width=\"100\" style=\"vertical-align:middle;\">Pulang</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			</table>
+			</div>";
+		return $text;
+	}		
+	
+	function lData(){
+		global $s,$par,$menuAccess;		
+		if (isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1')
+		$sLimit = "limit ".intval($_GET['iDisplayStart']).", ".intval($_GET['iDisplayLength']);
+				
+		$sWhere= " where t1.idShift is not null";
+		if (!empty($_GET['fSearch']))
+			$sWhere.= " and (				
+				lower(t1.kodeShift) like '%".mysql_real_escape_string(strtolower($_GET['fSearch']))."%'
+				or lower(t1.keteranganShift) like '%".mysql_real_escape_string(strtolower($_GET['fSearch']))."%'
+				or lower(t2.namaData) like '%".mysql_real_escape_string(strtolower($_GET['fSearch']))."%'
+			)";
+			
+		$arrOrder = array(	
+			"t1.idShift",
+			"t2.namaData",
+			"t1.namaShift",	
+			"t1.kodeShift",
+			"t1.mulaiShift",
+			"t1.selesaiShift",
+			"t1.keteranganShift",
+			"t1.groupShift",
+		);
+		$orderBy = $arrOrder["".$_GET[iSortCol_0].""]." ".$_GET[sSortDir_0];
+		$sql="select * from dta_shift t1 left join mst_data t2 on (t1.idLokasi=t2.kodeData) $sWhere order by $orderBy $sLimit";
+		$res=db($sql);
+		
+		$json = array(
+			"iTotalRecords" => mysql_num_rows($res),
+			"iTotalDisplayRecords" => getField("select count(*) from dta_shift t1 left join mst_data t2 on (t1.idLokasi=t2.kodeData) $sWhere"),
+			"aaData" => array(),
+		);
+		
+		$no=intval($_GET['iDisplayStart']);
+		while($r=mysql_fetch_array($res)){
+			$no++;
+			if(empty($r[namaData])) $r[namaData] = "ALL";
+			$statusShift=$r[statusShift] == "t" ?
+					"<img src=\"styles/images/t.png\" title=\"Active\">":
+					"<img src=\"styles/images/f.png\" title=\"Not Active\">";			
+			
+			$controlShift="";
+			
+			if(isset($menuAccess[$s]["edit"]))
+			$controlShift.="<a href=\"#Edit\" title=\"Edit Data\" class=\"edit\"  onclick=\"openBox('popup.php?par[mode]=edit&par[idShift]=$r[idShift]".getPar($par,"mode,idShift")."',875,550);\"><span>Edit</span></a>";
+			
+			if(isset($menuAccess[$s]["delete"]))
+			$controlShift.=" <a href=\"?par[mode]=del&par[idShift]=$r[idShift]".getPar($par,"mode,idShift")."\" onclick=\"return confirm('are you sure to delete data ?');\" title=\"Delete Data\" class=\"delete\"><span>Delete</span></a>";
+			
+			$data=array(
+				"<div align=\"center\">".$no.".</div>",				
+				"<div align=\"left\">".$r[namaData]."</div>",
+				"<div align=\"left\">".$r[namaShift]."</div>",
+				"<div align=\"center\">".$r[kodeShift]."</div>",
+				"<div align=\"center\">".substr($r[mulaiShift],0,5)."</div>",
+				"<div align=\"center\">".substr($r[selesaiShift],0,5)."</div>",
+				"<div align=\"left\">".nl2br($r[keteranganShift])."</div>",
+				"<div align=\"left\">".$r[groupShift]."</div>",
+				"<div align=\"center\">".$statusShift."</div>",								
+				"<div align=\"center\">".$controlShift."</div>",
+			);
+		
+		
+			$json['aaData'][]=$data;
+		}
+		return json_encode($json);
+	}
+	
+	function getContent($par){
+		global $s,$_submit,$menuAccess;
+		switch($par[mode]){			
+			case "lst":
+				$text=lData();
+			break;			
+			
+			case "del":
+				if(isset($menuAccess[$s]["delete"])) $text = hapus(); else $text = lihat();
+			break;
+			case "edit":
+				if(isset($menuAccess[$s]["edit"])) $text = empty($_submit) ? form() : ubah(); else $text = lihat();
+			break;
+			case "add":
+				if(isset($menuAccess[$s]["add"])) $text = empty($_submit) ? form() : tambah(); else $text = lihat();
+			break;
+			default:
+				$text = lihat();
+			break;
+		}
+		return $text;
+	}	
+?>

@@ -1,0 +1,466 @@
+<?php
+
+/*
+ *  Build on pojay.dev @42A
+ */
+
+/**
+ * Description of class.recapplicantver.inc
+ *
+ * @author mazte
+ */
+class RecApplicantVer extends DAL {
+
+  public $id;
+  public $planId;
+  public $vacId;
+  public $applicantId;
+  public $recommendation;
+  public $fileApplicant;
+  public $admStatus;
+  public $selStatus;
+  public $resultStatus;
+  public $placementStatus;
+  public $lastStatus;
+  public $creBy;
+  public $creDate;
+  public $updBy;
+  public $updDate;
+
+  public function __construct($dbo = NULL) {
+    if ($dbo == NULL) {
+      parent::__construct($dbo);
+    }
+  }
+
+  function persist() {
+    $sql = "INSERT INTO rec_applicant_ver (
+		
+plan_id,
+vac_id,
+applicant_id,
+recommendation,
+file_applicant,
+adm_status,
+sel_status,
+result_status,
+placement_status,
+last_status,
+
+          cre_by,
+          cre_date
+          ) VALUES (
+          
+:pPlanId, 
+:pVacId, 
+:pApplicantId, 
+:pRecommendation, 
+:pFileAppliant, 
+:pAdmStatus, 
+:pSelStatus, 
+:pResultStatus, 
+:pPlacementStatus, 
+:pLastStatus, 
+
+          :pCreBy,
+          :pCreDate
+          )";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->creBy = $cUsername;
+      $this->creDate = date('Y-m-d H:i:s');
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pPlanId', $this->planId, PDO::PARAM_STR);
+      $stmt->bindParam(':pVacId', $this->vacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pApplicantId', $this->applicantId, PDO::PARAM_STR);
+      $stmt->bindParam(':pRecommendation', $this->recommendation, PDO::PARAM_STR);
+      $stmt->bindParam(':pFileAppliant', $this->fileAppliant, PDO::PARAM_STR);
+      $stmt->bindParam(':pAdmStatus', $this->admStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pSelStatus', $this->selStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pResultStatus', $this->resultStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pPlacementStatus', $this->placementStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pLastStatus', $this->lastStatus, PDO::PARAM_STR);
+
+      $stmt->bindParam(':pCreBy', $this->creBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pCreDate', $this->creDate, PDO::PARAM_STR);
+
+      $stmt->execute();
+      $this->id = $this->db->lastInsertId();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function update() {
+    $sql = " UPDATE rec_applicant_ver SET
+plan_id=:pPlanId,
+vac_id=:pVacId,
+applicant_id=:pApplicantId,
+recommendation=:pRecommendation,
+file_applicant=:pFileApplicant,
+adm_status=:pAdmStatus,
+sel_status=:pSelStatus,
+result_status=:pResultStatus,
+placement_status=:pPlacementStatus,
+last_status=:pLastStatus,
+
+
+          upd_by=:pUpdBy,
+          upd_date=:pUpdDate
+          WHERE id=:pId";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->updBy = $cUsername;
+      $this->updDate = date('Y-m-d H:i:s');
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pPlanId', $this->planId, PDO::PARAM_STR);
+      $stmt->bindParam(':pVacId', $this->vacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pApplicantId', $this->applicantId, PDO::PARAM_STR);
+      $stmt->bindParam(':pRecommendation', $this->recommendation, PDO::PARAM_STR);
+      $stmt->bindParam(':pFileApplicant', $this->fileApplicant, PDO::PARAM_STR);
+      $stmt->bindParam(':pAdmStatus', $this->admStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pSelStatus', $this->selStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pResultStatus', $this->resultStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pPlacementStatus', $this->placementStatus, PDO::PARAM_STR);
+      $stmt->bindParam(':pLastStatus', $this->lastStatus, PDO::PARAM_STR);
+
+      $stmt->bindParam(':pUpdBy', $this->updBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pUpdDate', $this->updDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function destroy() {
+    $sql = " DELETE FROM rec_applicant_ver
+				 WHERE id=:pId
+				 ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      return 1;
+    } catch (Exception $ex) {
+      var_dump($ex);
+      return 0;
+    }
+  }
+
+  function getById() {
+    $sql = " SELECT 
+      id,
+      plan_id,
+      vac_id,
+      applicant_id,
+      recommendation,
+      file_applicant,
+      adm_status,
+      sel_status,
+      result_status,
+      placement_status,
+      last_status,
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_applicant_ver 
+      WHERE id=:pId";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as $row) {
+        $this->id = $row["id"];
+        $this->planId = $row["plan_id"];
+        $this->vacId = $row["vac_id"];
+        $this->applicantId = $row["applicant_id"];
+        $this->recommendation = $row["recommendation"];
+        $this->fileApplicant = $row["file_applicant"];
+        $this->admStatus = $row["adm_status"];
+        $this->selStatus = $row["sel_status"];
+        $this->resultStatus = $row["result_status"];
+        $this->placementStatus = $row["placement_status"];
+        $this->lastStatus = $row["last_status"];
+
+        $this->creBy = $row["cre_by"];
+        $this->creDate = $row["cre_date"];
+        $this->updBy = $row["upd_by"];
+        $this->updDate = $row["upd_date"];
+      }
+      $stmt->closeCursor();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function getAll() {
+    $sql = " SELECT 
+id,
+plan_id,
+vac_id,
+applicant_id,
+recommendation,
+file_applicant,
+adm_status,
+sel_status,
+result_status,
+placement_status,
+last_status,
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_applicant_ver ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $ret = array();
+      foreach ($result as $row) {
+        $ret0 = new RecApplicantVer("C");
+        $ret0->id = $row["id"];
+        $ret0->planId = $row["plan_id"];
+        $ret0->vacId = $row["vac_id"];
+        $ret0->applicantId = $row["applicant_id"];
+        $ret0->recommendation = $row["recommendation"];
+        $ret0->fileApplicant = $row["file_applicant"];
+        $ret0->admStatus = $row["adm_status"];
+        $ret0->selStatus = $row["sel_status"];
+        $ret0->resultStatus = $row["result_status"];
+        $ret0->placementStatus = $row["placement_status"];
+        $ret0->lastStatus = $row["last_status"];
+
+        $ret0->creBy = $row["cre_by"];
+        $ret0->creDate = $row["cre_date"];
+        $ret0->updBy = $row["upd_by"];
+        $ret0->updDate = $row["upd_date"];
+        $ret[] = $ret0;
+      }
+      $stmt->closeCursor();
+      return $ret;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function loadTableReport($cVac, $cYear) {
+    $sql = " SELECT
+t1.id id,
+t1.plan_id planId,
+t1.vac_id vacId,
+t1.applicant_id applicantId,
+t1.recommendation recommendation,
+t1.file_applicant fileApplicant,
+t1.adm_status admStatus,
+t1.sel_status selStatus,
+t1.result_status resultStatus,
+t1.placement_status placementStatus,
+t1.last_status lastStatus,
+t2.name,
+t4.pos_available posAvailable,
+CASE WHEN t2.gender ='M' THEN 'Laki-Laki' ELSE 'Perempuan' END gender,
+CONCAT(TIMESTAMPDIFF(YEAR,  t2.birth_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, t2.birth_date,  CURRENT_DATE ) % 12, ' bln') applAge,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_type=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) eduName,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_dept=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) eduDeptName,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_applicant_ver t1 
+      JOIN rec_applicant t2 ON t1.applicant_id=t2.id
+      JOIN rec_vacancy t3 ON t3.id=t1.vac_id
+      JOIN rec_plan t4 ON t4.id=t1.plan_id
+      WHERE  YEAR(t4.propose_date)='$cYear'
+      ";
+    if (!empty($cVac)) {
+      $sql.=" AND t1.vac_id='$cVac'";
+    }
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  function exportToExcelReport($cVac, $cYear) {
+    $sql = " SELECT      
+CASE WHEN t2.cat=1 THEN 'Internal' ELSE 'Eksternal' END `Kategori`,
+t4.pos_available `Posisi yang dilamar`,
+t2.name `Nama Pelamar`,
+t2.alias `Alias`,
+t2.ktp_no `Nomor KTP`,
+DATE_FORMAT(t2.ktp_valid,'%d-%m-%Y') `Berlaku s/d`,
+t5.namaData `Tempat Lahir`,
+DATE_FORMAT(t2.birth_date,'%d-%m-%Y') `Tgl. Lahir`,
+CASE WHEN t2.gender ='M' THEN 'Laki-Laki' ELSE 'Perempuan' END `Jenis Kelamin`,
+t2.dom_address `Alamat Domisili`,
+t6.namaData `Kota`,
+t7.namaData `Propinsi`,
+t2.phone_no `No. Telepon`,
+t2.cell_no `No. HP`,
+t2.email `Email`,
+CONCAT(t8.namaData,' - ',IFNULL(t8.keteranganData,'')) `Status Perkawinan`,
+t2.npwp_no `Nomor NPWP`,
+CONCAT(TIMESTAMPDIFF(YEAR,  t2.birth_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, t2.birth_date,  CURRENT_DATE ) % 12, ' bln') `Umur`,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_type=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) `Pendidikan`,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_dept=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) `Jurusan`,
+CASE WHEN t1.adm_status=1 THEN 'OK' ELSE '' END `Administrasi`,
+CASE WHEN t1.sel_status=1 THEN 'OK' ELSE '' END `Seleksi`,
+CASE WHEN t1.result_status=1 THEN 'OK' ELSE '' END `Penetapan`,
+CASE WHEN t1.placement_status=1 THEN 'OK' ELSE '' END `Penempatan`
+
+FROM rec_applicant_ver t1 
+JOIN rec_applicant t2 ON t1.applicant_id=t2.id
+JOIN rec_vacancy t3 ON t3.id=t1.vac_id
+JOIN rec_plan t4 ON t4.id=t1.plan_id
+LEFT JOIN mst_data t5 ON t5.kodeData=t2.birth_place
+LEFT JOIN mst_data t6 ON t6.kodeData=t2.dom_city
+LEFT JOIN mst_data t7 ON t7.kodeData=t2.dom_prov
+LEFT JOIN mst_data t8 ON t8.kodeData=t2.marital
+
+      WHERE  YEAR(t4.propose_date)='$cYear'
+      ";
+    if (!empty($cVac)) {
+      $sql.=" AND t1.vac_id='$cVac'";
+    }
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return $result;
+  }
+
+  function loadTable($applCat, $cVac, $cYear) {
+    $sql = " SELECT
+t1.id id,
+t1.plan_id planId,
+t1.vac_id vacId,
+t1.applicant_id applicantId,
+t1.recommendation recommendation,
+t1.file_applicant fileApplicant,
+t1.adm_status admStatus,
+t1.sel_status selStatus,
+t1.result_status resultStatus,
+t1.placement_status placementStatus,
+t1.last_status lastStatus,
+t2.name,
+t4.pos_available posAvailable,
+CASE WHEN t2.gender ='M' THEN 'Laki-Laki' ELSE 'Perempuan' END gender,
+CONCAT(TIMESTAMPDIFF(YEAR,  t2.birth_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, t2.birth_date,  CURRENT_DATE ) % 12, ' bln') applAge,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_type=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) eduName,
+(SELECT x2.namaData 
+FROM rec_applicant_edu x1 
+JOIN mst_data x2 ON x1.edu_dept=x2.kodeData
+WHERE x1.parent_id=t1.applicant_id
+ORDER BY x1.edu_type DESC 
+LIMIT 1
+) eduDeptName,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_applicant_ver t1 
+      JOIN rec_applicant t2 ON t1.applicant_id=t2.id
+     JOIN rec_vacancy t3 ON t3.id=t1.vac_id
+      JOIN rec_plan t4 ON t4.id=t1.plan_id
+      WHERE t2.cat='$applCat' 
+      AND YEAR(t4.propose_date)='$cYear'
+      ";
+    if (!empty($cVac)) {
+      $sql.=" AND t1.vac_id='$cVac'";
+    }
+    // echo $sql;
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  private function populateWithPost() {
+    foreach ($_POST as $var => $value) {
+      if (property_exists($this, $var)) {
+        if (!is_array($value)) {
+          $this->$var = htmlentities($value);
+          if ((strpos($var, "Date") > -1 || strpos(strtolower($var), "tanggal") > -1) && ($value == "" || $value == "0000-00-00")) {
+            $this->$var = null;
+          } else if ($value == "" || $value == "0000-00-00 00:00:00" || $value == "0000-00-00") {
+            $this->$var = null;
+          }
+        } else {
+          $this->$var = implode(";", $value);
+        }
+      }
+    }
+    return $this;
+  }
+
+  function processForm() {
+    $this->id = $_SESSION["entity_id"];
+    $this->getById();
+    $this->populateWithPost();
+    if ($this->id == "") {
+      $this->persist();
+    } else {
+      $this->update();
+    }
+    return $this;
+  }
+
+}
+
+?>

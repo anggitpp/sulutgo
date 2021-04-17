@@ -1,0 +1,800 @@
+<?php
+
+/*
+ *  Build on pojay.dev @42A
+ */
+
+/**
+ * Description of class.recapplicant.inc
+ *
+ * @author mazte
+ */
+class RecApplicant extends DAL {
+
+  public $id;
+  public $cat;
+  public $name;
+  public $alias;
+  public $birthPlace;
+  public $birthDate;
+  public $tglInput;
+  public $ktpNo;
+  public $ktpFilename;
+  public $ktpValid;
+  public $gender;
+  public $ktpAddress;
+  public $ktpProv;
+  public $ktpCity;
+  public $domAddress;
+  public $domProv;
+  public $domCity;
+  public $phoneNo;
+  public $cellNo;
+  public $cellNo2;
+  public $email;
+  public $marital;
+  public $religion;
+  public $picFilename;
+  public $npwpNo;
+  public $npwpDate;
+  public $bpjsNo;
+  public $bpjsDate;
+  public $bloodType;
+  public $bloodResus;
+  public $uniCloth;
+  public $uniPant;
+  public $uniShoe;
+  public $acceptVacId;
+  public $acceptPlanId;
+  public $empId;
+  public $creBy;
+  public $creDate;
+  public $updBy;
+  public $updDate;
+
+  public function __construct($dbo = NULL) {
+    if ($dbo == NULL) {
+      parent::__construct($dbo);
+    }
+  }
+
+  // function idPelamar(){
+  //   $idPelamar = getNumber("DP");
+  //   $id = getField("select id from rec_applicant order by id desc LIMIT 1");
+  //   $sql = "update rec_applicant set id_pelamar ='$idPelamar' where id = '$id'";
+  //   db($sql);
+  // }
+
+  function persist() {
+    $sql = "INSERT INTO rec_applicant (
+    id_pelamar,
+cat,
+name,
+alias,
+birth_place,
+birth_date,
+ktp_no,
+ktp_filename,
+ktp_valid,
+gender,
+ktp_address,
+ktp_prov,
+ktp_city,
+dom_address,
+dom_prov,
+dom_city,
+
+phone_no,
+cell_no,
+cell_no2,
+email,
+marital,
+religion,
+pic_filename,
+npwp_no,
+npwp_date,
+bpjs_no,
+bpjs_date,
+blood_type,
+blood_resus,
+tinggi_badan,
+berat_badan,
+uni_cloth,
+uni_pant,
+uni_shoe,
+accept_vac_id,
+accept_plan_id,
+emp_id,
+tglInput,
+    
+          cre_by,
+          cre_date
+          ) VALUES (
+:pIdPelamar,
+:pCat,
+:pName, 
+:pAlias, 
+:pBirthPlace, 
+:pBirthDate, 
+:pKtpNo, 
+:pKtpFilename, 
+:pKtpValid, 
+:pGender, 
+:pKtpAddress, 
+:pKtpProv, 
+:pKtpCity, 
+:pDomAddress, 
+:pDomProv, 
+:pDomCity, 
+:pPhoneNo, 
+:pCellNo, 
+:pCellNo2, 
+:pEmail, 
+:pMarital, 
+:pReligion, 
+:pPicFilename, 
+:pNpwpNo, 
+:pNpwpDate, 
+:pBpjsNo, 
+:pBpjsDate, 
+:pBloodType, 
+:pBloodResus, 
+:pTinggiBadan,
+:pBeratBadan,
+:pUniCloth, 
+:pUniPant, 
+:pUniShoe, 
+:pAcceptVacId, 
+:pAcceptPlanId, 
+:pEmpId,
+:pTglInput,
+
+          :pCreBy,
+          :pCreDate
+          )";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->creBy = $cUsername;
+      $this->idPelamar = getNumber("DP");
+
+      $this->creDate = date('Y-m-d H:i:s');
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pIdPelamar', $this->idPelamar, PDO::PARAM_STR);
+      $stmt->bindParam(':pCat', $this->cat, PDO::PARAM_STR);
+      $stmt->bindParam(':pName', $this->name, PDO::PARAM_STR);
+      $stmt->bindParam(':pAlias', $this->alias, PDO::PARAM_STR);
+      $stmt->bindParam(':pBirthPlace', $this->birthPlace, PDO::PARAM_STR);
+      $stmt->bindParam(':pBirthDate', $this->birthDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpNo', $this->ktpNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpFilename', $this->ktpFilename, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpValid', $this->ktpValid, PDO::PARAM_STR);
+      $stmt->bindParam(':pGender', $this->gender, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpAddress', $this->ktpAddress, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpProv', $this->ktpProv, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpCity', $this->ktpCity, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomAddress', $this->domAddress, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomProv', $this->domProv, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomCity', $this->domCity, PDO::PARAM_STR);
+      $stmt->bindParam(':pPhoneNo', $this->phoneNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCellNo', $this->cellNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCellNo2', $this->cellNo2, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmail', $this->email, PDO::PARAM_STR);
+      $stmt->bindParam(':pMarital', $this->marital, PDO::PARAM_STR);
+      $stmt->bindParam(':pReligion', $this->religion, PDO::PARAM_STR);
+      $stmt->bindParam(':pPicFilename', $this->picFilename, PDO::PARAM_STR);
+      $stmt->bindParam(':pNpwpNo', $this->npwpNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pNpwpDate', $this->npwpDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pBpjsNo', $this->bpjsNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pBpjsDate', $this->bpjsDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pBloodType', $this->bloodType, PDO::PARAM_STR);
+      $stmt->bindParam(':pBloodResus', $this->bloodResus, PDO::PARAM_STR);
+      $stmt->bindParam(':pTinggiBadan', $this->tinggiBadan, PDO::PARAM_STR);
+      $stmt->bindParam(':pBeratBadan', $this->beratBadan, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniCloth', $this->uniCloth, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniPant', $this->uniPant, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniShoe', $this->uniShoe, PDO::PARAM_STR);
+      $stmt->bindParam(':pAcceptVacId', $this->acceptVacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pAcceptPlanId', $this->acceptPlanId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmpId', $this->empId, PDO::PARAM_STR);
+      $stmt->bindParam(':pTglInput', $this->tglInput, PDO::PARAM_STR);
+
+      $stmt->bindParam(':pCreBy', $this->creBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pCreDate', $this->creDate, PDO::PARAM_STR);
+
+      $stmt->execute();
+      $this->id = $this->db->lastInsertId();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function update() {
+    $sql = " UPDATE rec_applicant SET
+cat=:pCat,
+name=:pName,
+alias=:pAlias,
+birth_place=:pBirthPlace,
+birth_date=:pBirthDate,
+ktp_no=:pKtpNo,
+ktp_filename=:pKtpFilename,
+ktp_valid=:pKtpValid,
+gender=:pGender,
+ktp_address=:pKtpAddress,
+ktp_prov=:pKtpProv,
+ktp_city=:pKtpCity,
+dom_address=:pDomAddress,
+dom_prov=:pDomProv,
+dom_city=:pDomCity,
+phone_no=:pPhoneNo,
+cell_no=:pCellNo,
+cell_no2=:pCellNo2,
+email=:pEmail,
+marital=:pMarital,
+religion=:pReligion,
+pic_filename=:pPicFilename,
+npwp_no=:pNpwpNo,
+npwp_date=:pNpwpDate,
+bpjs_no=:pBpjsNo,
+bpjs_date=:pBpjsDate,
+blood_type=:pBloodType,
+blood_resus=:pBloodResus,
+tinggi_badan=:pTinggiBadan,
+berat_badan=:pBeratBadan,
+uni_cloth=:pUniCloth,
+uni_pant=:pUniPant,
+uni_shoe=:pUniShoe,
+accept_vac_id=:pAcceptVacId,
+accept_plan_id=:pAcceptPlanId,
+emp_id=:pEmpId,
+tglInput=:pTglInput,
+
+          upd_by=:pUpdBy,
+          upd_date=:pUpdDate
+          WHERE id=:pId";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->updBy = $cUsername;
+      $this->updDate = date('Y-m-d H:i:s');
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $this->cat, PDO::PARAM_STR);
+      $stmt->bindParam(':pName', $this->name, PDO::PARAM_STR);
+      $stmt->bindParam(':pAlias', $this->alias, PDO::PARAM_STR);
+      $stmt->bindParam(':pBirthPlace', $this->birthPlace, PDO::PARAM_STR);
+      $stmt->bindParam(':pBirthDate', $this->birthDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpNo', $this->ktpNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpFilename', $this->ktpFilename, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpValid', $this->ktpValid, PDO::PARAM_STR);
+      $stmt->bindParam(':pGender', $this->gender, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpAddress', $this->ktpAddress, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpProv', $this->ktpProv, PDO::PARAM_STR);
+      $stmt->bindParam(':pKtpCity', $this->ktpCity, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomAddress', $this->domAddress, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomProv', $this->domProv, PDO::PARAM_STR);
+      $stmt->bindParam(':pDomCity', $this->domCity, PDO::PARAM_STR);
+      $stmt->bindParam(':pPhoneNo', $this->phoneNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCellNo', $this->cellNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCellNo2', $this->cellNo2, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmail', $this->email, PDO::PARAM_STR);
+      $stmt->bindParam(':pMarital', $this->marital, PDO::PARAM_STR);
+      $stmt->bindParam(':pReligion', $this->religion, PDO::PARAM_STR);
+      $stmt->bindParam(':pPicFilename', $this->picFilename, PDO::PARAM_STR);
+      $stmt->bindParam(':pNpwpNo', $this->npwpNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pNpwpDate', $this->npwpDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pBpjsNo', $this->bpjsNo, PDO::PARAM_STR);
+      $stmt->bindParam(':pBpjsDate', $this->bpjsDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pBloodType', $this->bloodType, PDO::PARAM_STR);
+      $stmt->bindParam(':pBloodResus', $this->bloodResus, PDO::PARAM_STR);
+      $stmt->bindParam(':pTinggiBadan', $this->tinggiBadan, PDO::PARAM_STR);
+      $stmt->bindParam(':pBeratBadan', $this->beratBadan, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniCloth', $this->uniCloth, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniPant', $this->uniPant, PDO::PARAM_STR);
+      $stmt->bindParam(':pUniShoe', $this->uniShoe, PDO::PARAM_STR);
+      $stmt->bindParam(':pAcceptVacId', $this->acceptVacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pAcceptPlanId', $this->acceptPlanId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmpId', $this->empId, PDO::PARAM_STR);
+      $stmt->bindParam(':pTglInput', $this->tglInput, PDO::PARAM_STR);
+
+      $stmt->bindParam(':pUpdBy', $this->updBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pUpdDate', $this->updDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function destroy() {
+    $sql = " DELETE FROM rec_applicant
+         WHERE id=:pId
+         ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      return 1;
+    } catch (Exception $ex) {
+      var_dump($ex);
+      return 0;
+    }
+  }
+
+  function getById() {
+    $sql = " SELECT 
+id,
+id_pelamar,
+cat,
+name,
+alias,
+birth_place,
+birth_date,
+ktp_no,
+ktp_filename,
+ktp_valid,
+gender,
+ktp_address,
+ktp_prov,
+ktp_city,
+dom_address,
+dom_prov,
+dom_city,
+phone_no,
+cell_no,
+cell_no2,
+email,
+marital,
+religion,
+CONCAT(TIMESTAMPDIFF(YEAR,  birth_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, birth_date,  CURRENT_DATE ) % 12, ' bln') usia,
+pic_filename,
+npwp_no,
+npwp_date,
+bpjs_no,
+bpjs_date,
+blood_type,
+blood_resus,
+tinggi_badan,
+berat_badan,
+uni_cloth,
+uni_pant,
+uni_shoe,
+accept_vac_id,
+accept_plan_id,
+emp_id,
+tglInput,
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_applicant 
+      WHERE id=:pId";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as $row) {
+        $this->id = $row["id"];
+        $this->idPelamar = $row["id_pelamar"];
+        $this->cat = $row["cat"];
+        $this->name = $row["name"];
+        $this->alias = $row["alias"];
+        $this->birthPlace = $row["birth_place"];
+        $this->birthDate = $row["birth_date"];
+        $this->usia = $row["usia"];
+        $this->ktpNo = $row["ktp_no"];
+        $this->ktpFilename = $row["ktp_filename"];
+        $this->ktpValid = $row["ktp_valid"];
+        $this->gender = $row["gender"];
+        $this->ktpAddress = $row["ktp_address"];
+        $this->ktpProv = $row["ktp_prov"];
+        $this->ktpCity = $row["ktp_city"];
+        $this->domAddress = $row["dom_address"];
+        $this->domProv = $row["dom_prov"];
+        $this->domCity = $row["dom_city"];
+        $this->phoneNo = $row["phone_no"];
+        $this->cellNo = $row["cell_no"];
+        $this->cellNo2 = $row["cell_no2"];
+        $this->email = $row["email"];
+        $this->marital = $row["marital"];
+        $this->religion = $row["religion"];
+        $this->picFilename = $row["pic_filename"];
+        $this->npwpNo = $row["npwp_no"];
+        $this->npwpDate = $row["npwp_date"];
+        $this->bpjsNo = $row["bpjs_no"];
+        $this->bpjsDate = $row["bpjs_date"];
+        $this->bloodType = $row["blood_type"];
+        $this->bloodResus = $row["blood_resus"];
+        $this->tinggiBadan = $row["tinggi_badan"];
+        $this->beratBadan = $row["berat_badan"];
+        $this->uniCloth = $row["uni_cloth"];
+        $this->uniPant = $row["uni_pant"];
+        $this->uniShoe = $row["uni_shoe"];
+        $this->acceptVacId = $row["accept_vac_id"];
+        $this->acceptPlanId = $row["accept_plan_id"];
+        $this->empId = $row["emp_id"];
+        $this->tglInput = $row["tglInput"];
+
+        $this->creBy = $row["cre_by"];
+        $this->creDate = $row["cre_date"];
+        $this->updBy = $row["upd_by"];
+        $this->updDate = $row["upd_date"];
+      }
+      $stmt->closeCursor();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function getAll() {
+    $sql = " SELECT 
+id,
+cat,
+name,
+alias,
+birth_place,
+birth_date,
+ktp_no,
+ktp_filename,
+ktp_valid,
+gender,
+ktp_address,
+ktp_prov,
+ktp_city,
+dom_address,
+dom_prov,
+dom_city,
+phone_no,
+cell_no,
+cell_no2,
+email,
+marital,
+religion,
+pic_filename,
+npwp_no,
+npwp_date,
+bpjs_no,
+bpjs_date,
+blood_type,
+blood_resus,
+tinggi_badan,
+berat_badan,
+uni_cloth,
+uni_pant,
+uni_shoe,
+accept_vac_id,
+accept_plan_id,
+tglInput,
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_applicant ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $ret = array();
+      foreach ($result as $row) {
+        $ret0 = new RecApplicant("C");
+        $ret0->id = $row["id"];
+        $ret0->cat = $row["cat"];
+        $ret0->name = $row["name"];
+        $ret0->alias = $row["alias"];
+        $ret0->birthPlace = $row["birth_place"];
+        $ret0->birthDate = $row["birth_date"];
+        $ret0->ktpNo = $row["ktp_no"];
+        $ret0->ktpFilename = $row["ktp_filename"];
+        $ret0->ktpValid = $row["ktp_valid"];
+        $ret0->gender = $row["gender"];
+        $ret0->ktpAddress = $row["ktp_address"];
+        $ret0->ktpProv = $row["ktp_prov"];
+        $ret0->ktpCity = $row["ktp_city"];
+        $ret0->domAddress = $row["dom_address"];
+        $ret0->domProv = $row["dom_prov"];
+        $ret0->domCity = $row["dom_city"];
+        $ret0->phoneNo = $row["phone_no"];
+        $ret0->cellNo = $row["cell_no"];
+        $ret0->cellNo2 = $row["cell_no2"];
+        $ret0->email = $row["email"];
+        $ret0->marital = $row["marital"];
+        $ret0->religion = $row["religion"];
+        $ret0->picFilename = $row["pic_filename"];
+        $ret0->npwpNo = $row["npwp_no"];
+        $ret0->npwpDate = $row["npwp_date"];
+        $ret0->bpjsNo = $row["bpjs_no"];
+        $ret0->bpjsDate = $row["bpjs_date"];
+        $ret0->bloodType = $row["blood_type"];
+        $ret0->bloodResus = $row["blood_resus"];
+        $ret0->tinggiBadan = $row["tinggi_badan"];
+        $ret0->beratBadan = $row["berat_badan"];
+        $ret0->uniCloth = $row["uni_cloth"];
+        $ret0->uniPant = $row["uni_pant"];
+        $ret0->uniShoe = $row["uni_shoe"];
+        $ret0->acceptVacId = $row["accept_vac_id"];
+        $ret0->acceptPlanId = $row["accept_plan_id"];
+        $ret0->tglInput = $row["tglInput"];
+
+        $ret0->creBy = $row["cre_by"];
+        $ret0->creDate = $row["cre_date"];
+        $ret0->updBy = $row["upd_by"];
+        $ret0->updDate = $row["upd_date"];
+        $ret[] = $ret0;
+      }
+      $stmt->closeCursor();
+      return $ret;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function loadTable() {
+    $sql = " SELECT
+      
+t1.id id,
+t1.cat cat,
+t1.name name,
+t1.alias alias,
+t1.birth_place birthPlace,
+t1.birth_date birthDate,
+
+t1.ktp_no ktpNo,
+t1.ktp_filename ktpFilename,
+t1.ktp_valid ktpValid,
+t1.gender gender,
+t1.ktp_address ktpAddress,
+t1.ktp_prov ktpProv,
+t1.ktp_city ktpCity,
+t1.dom_address domAddress,
+t1.dom_prov domProv,
+t1.dom_city domCity,
+t1.phone_no phoneNo,
+t1.cell_no cellNo,
+t1.cell_no2 cellNo2,
+t1.email email,
+t1.marital marital,
+t1.religion religion,
+t1.pic_filename picFilename,
+t1.npwp_no npwpNo,
+t1.npwp_date npwpDate,
+t1.bpjs_no bpjsNo,
+t1.bpjs_date bpjsDate,
+t1.blood_type bloodType,
+t1.blood_resus bloodResus,
+t1.tinggi_badan tinggiBadan,
+t1.berat_badan beratBadan,
+t1.uni_cloth uniCloth,
+t1.uni_pant uniPant,
+t1.uni_shoe uniShoe,
+t1.accept_vac_id acceptVacId,
+t1.accept_plan_id acceptPlanId,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_applicant t1 
+      ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  private function populateWithPost() {
+    foreach ($_POST as $var => $value) {
+      if (property_exists($this, $var)) {
+        if (!is_array($value)) {
+          $this->$var = htmlentities($value);
+          if ((strpos($var, "Date") > -1 || strpos(strtolower($var), "tanggal") > -1) && ($value == "" || $value == "0000-00-00")) {
+            $this->$var = null;
+          } else if ($value == "" || $value == "0000-00-00 00:00:00" || $value == "0000-00-00") {
+            $this->$var = null;
+          }
+        } else {
+          $this->$var = implode(";", $value);
+        }
+      }
+    }
+    return $this;
+  }
+
+  function processForm() {
+    $cutil = new Common();
+    $this->id = $_SESSION["entity_id"];
+    $this->cat = $_SESSION["applicant_cat"];
+    $this->getById();
+    $this->populateWithPost();
+    $this->name=  strtoupper($this->name);
+    //HANDLE FILE UPLOAD KTP
+    $fileKtpTmp = $_FILES["ktpFilename"]["tmp_name"];
+    $fileKtpName = $_FILES["ktpFilename"]["name"];
+    if ($fileKtpTmp != "" && $fileKtpTmp != "none") {
+      $ktpPath = HOME_DIR . DS . "files" . DS . "recruit" . DS . "ktp" . DS;
+      if (!file_exists($ktpPath)) {
+        mkdir($ktpPath, "0777", true);
+      }
+      $fktpName = "ktp_" . date("Ymd_His") . "_" . $this->id . "." . pathinfo($fileKtpName, PATHINFO_EXTENSION);
+      if (move_uploaded_file($fileKtpTmp, $ktpPath . $fktpName)) {
+        $this->ktpFilename = $fktpName;
+      }
+    }
+    //HANDLE FILE UPLOAD FOTO
+    $filePicTmp = $_FILES["picFilename"]["tmp_name"];
+    $filePicName = $_FILES["picFilename"]["name"];
+    if ($filePicTmp != "" && $filePicTmp != "none") {
+      $picPath = HOME_DIR . DS . "files" . DS . "recruit" . DS . "pic" . DS;
+      if (!file_exists($picPath)) {
+        mkdir($picPath, "0777", true);
+      }
+      $fpicName = "pic_" . date("Ymd_His") . "_" . $this->id . "." . pathinfo($filePicName, PATHINFO_EXTENSION);
+      if (move_uploaded_file($filePicTmp, $picPath . $fpicName)) {
+        $this->picFilename = $fpicName;
+      }
+    }
+    if ($this->id == "") {
+      $this->persist();
+      // $this->idPelamar();
+    } else {
+      $this->update();
+    }
+
+    //PROCESS APPL VERIFIKASI
+    $applVer = new RecApplicantVer();
+    $applVer->id = $_SESSION["entity2_id"];
+    $applVer = $applVer->getById();
+    $applVer->admStatus = $_POST["admStatus"];
+    $applVer->applicantId = $this->id;
+    $applVer->lastStatus = $_POST["lastStatus"];
+    $applVer->recommendation = $_POST["recommendation"];
+    $applVer->vacId = $_POST["vacId"];
+    $applVer->planId = $cutil->getDescription("SELECT plan_id FROM rec_vacancy WHERE id='" . $_POST["vacId"] . "'", "plan_id");
+    //HANDLE FILE LAMARAN
+    $fileApplTmp = $_FILES["fileApplicant"]["tmp_name"];
+    $fileApplName = $_FILES["fileApplicant"]["name"];
+    if ($fileApplTmp != "" && $fileApplTmp != "none") {
+      $picPath = HOME_DIR . DS . "files" . DS . "recruit" . DS . "appl_letter" . DS;
+      if (!file_exists($picPath)) {
+        mkdir($picPath, "0777", true);
+      }
+      $fpicName = uniqid("appl_letter_") . "." . pathinfo($fileApplName, PATHINFO_EXTENSION);
+      if (move_uploaded_file($fileApplTmp, $picPath . $fpicName)) {
+        $applVer->fileApplicant = $fpicName;
+        
+      }
+    }
+
+    if ($applVer->id == "") {
+      $applVer = $applVer->persist();
+    } else {
+      $applVer = $applVer->update();
+    }
+
+    //PROCESS APPL TRAINING
+    $trainIds = $_POST["pTrainId"];
+    $dno = 0;
+    if (count($trainIds) > 0) {
+      $usedId = array();
+      foreach ($trainIds as $dTrainId) {
+        $applTrain = new RecApplicantPtrain();
+        $applTrain->id = $dTrainId;
+        $applTrain->parentId = $this->id;
+        $applTrain->instituteName = $_POST["pTrainInstituteName"][$dno];
+        $applTrain->trainingName = $_POST["pTrainTrainingName"][$dno];
+        $applTrain->position = $_POST["pTrainPosition"][$dno];
+        $applTrain->location = $_POST["pTrainLocation"][$dno];
+        $applTrain->endDate = $_POST["pTrainEndDate"][$dno];
+        $applTrain->startDate = $_POST["pTrainStartDate"][$dno];
+        $applTrain->filename = $_POST["pTrainFilename"][$dno];
+        $applTrain->remark = $_POST["pTrainRemark"][$dno];
+        if ($applTrain->id == "") {
+          $applTrain = $applTrain->persist();
+        } else {
+          $applTrain->update();
+        }
+        $usedId[] = $applTrain->id;
+        $dno++;
+      }
+      $usedDtlIds = implode(",", $usedId);
+      $cutil->execute("DELETE FROM rec_applicant_ptraining WHERE parent_id='$this->id' AND id NOT IN ($usedDtlIds)");
+    } else {
+      $cutil->execute("DELETE FROM rec_applicant_ptraining WHERE parent_id='$this->id'");
+    }
+
+
+    //PROCESS APPL EDU
+    $eduIds = $_POST["pEduId"];
+    $dno = 0;
+    if (count($eduIds) > 0) {
+      $usedId = array();
+      foreach ($eduIds as $dEduId) {
+        $applEdu = new RecApplicantEdu();
+        $applEdu->id = $dEduId;
+        $applEdu->parentId = $this->id;
+        $applEdu->eduCity = $_POST["pEduCity"][$dno];
+        $applEdu->eduDept = $_POST["pEduDept"][$dno];
+        $applEdu->eduJur = $_POST["pEduJur"][$dno];
+        $applEdu->eduEssay = $_POST["pEduEssay"][$dno];
+        $applEdu->eduIpk = $_POST["pEduIpk"][$dno];
+        $applEdu->eduFac = $_POST["pEduFac"][$dno];
+        $applEdu->eduFilename = $_POST["pEduFilename"][$dno];
+        $applEdu->eduName = $_POST["pEduName"][$dno];
+        $applEdu->eduType = $_POST["pEduType"][$dno];
+        $applEdu->eduYear = $_POST["pEduYear"][$dno];
+        if ($applEdu->id == "") {
+          $applEdu = $applEdu->persist();
+        } else {
+          $applEdu->update();
+        }
+        $usedId[] = $applEdu->id;
+        $dno++;
+      }
+      $usedDtlIds = implode(",", $usedId);
+      $cutil->execute("DELETE FROM rec_applicant_edu WHERE parent_id='$this->id' AND id NOT IN ($usedDtlIds)");
+    } else {
+      $cutil->execute("DELETE FROM rec_applicant_edu WHERE parent_id='$this->id'");
+    }
+    //PROCESS APPL CHARACTER
+    $applChar = new RecApplicantChar();
+    $applChar->id = $_SESSION["entity3_id"];
+    $applChar->parentId = $this->id;
+    $applChar->abilities = $_POST["abilities"];
+    $applChar->characteristic = $_POST["characteristic"];
+    $applChar->hobby = $_POST["hobby"];
+    $applChar->organization = $_POST["organization"];
+    if ($applChar->id == "") {
+      $applChar = $applChar->persist();
+    } else {
+      $applChar->update();
+    }
+    //PROCESS APPL PWORK
+
+    $pworkIds = $_POST["pWorkId"];
+    $dno = 0;
+    if (count($pworkIds) > 0) {
+      $usedId = array();
+      foreach ($pworkIds as $pwId) {
+        $applPw = new RecApplicantPwork();
+        $applPw->id = $pwId;
+        $applPw->parentId = $this->id;
+        $applPw->city = $_POST["pWorkCity"][$dno];
+        $applPw->companyName = $_POST["pWorkCompanyName"][$dno];
+        $applPw->position = $_POST["pWorkPosition"][$dno];
+        $applPw->dept = $_POST["pWorkDept"][$dno];
+        $applPw->division = $_POST["pWorkDivision"][$dno];
+        $applPw->endDate = $_POST["pWorkEndDate"][$dno];
+        $applPw->startDate = $_POST["pWorkStartDate"][$dno];
+        $applPw->filename = $_POST["pWorkFilename"][$dno];
+        $applPw->jobDesc = $_POST["pWorkJobDesc"][$dno];
+        $applPw->responsibility = $_POST["pWorkResponsibility"][$dno];
+        $applPw->remark = $_POST["pWorkRemark"][$dno];
+        $applPw->status = $_POST["pWorkStatus"][$dno];
+        if ($applPw->id == "") {
+          $applPw = $applPw->persist();
+        } else {
+          $applPw->update();
+        }
+        $usedId[] = $applPw->id;
+        $dno++;
+      }
+      $usedDtlIds = implode(",", $usedId);
+      $cutil->execute("DELETE FROM rec_applicant_pwork WHERE parent_id='$this->id' AND id NOT IN ($usedDtlIds)");
+    } else {
+      $cutil->execute("DELETE FROM rec_applicant_pwork WHERE parent_id='$this->id'");
+    } 
+//    die();
+    return $applVer->id;
+  }
+
+}
+
+?>

@@ -1,0 +1,260 @@
+<?php
+	if(!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";		
+	
+	function cek(){
+		global $db,$inp,$par;		
+		if(getField("select idCuti from dta_cuti where namaCuti='$inp[namaCuti]' and idCuti!='$par[idCuti]'"))
+		return "maaf, tipe cuti \" $inp[namaCuti] \" sudah ada";
+	}	
+	
+	function hapus(){
+		global $db,$s,$inp,$par,$cUsername;
+		list($mulaiCuti, $selesaiCuti) = explode("\t", getField("select concat(mulaiCuti, '\t', selesaiCuti) from dta_cuti where idCuti='$par[idCuti]'"));
+		
+		$sql="delete from dta_cuti where idCuti='$par[idCuti]'";
+		db($sql);
+
+		$plafon_id = 723;				
+		$sql="delete from emp_plafon where mulai='".$mulaiCuti."' and selesai='".$selesaiCuti."' and plafon_id='".$plafon_id."'";
+		db($sql);		
+		echo "<script>window.location='?".getPar($par,"mode,idCuti")."';</script>";
+	}
+		
+	function ubah(){
+		global $db,$s,$inp,$par,$cUsername;
+		repField();	
+		
+		update();
+		
+		$sql="update dta_cuti set idLokasi='$inp[idLokasi]', mulaiCuti='".setTanggal($inp[mulaiCuti])."', selesaiCuti='".setTanggal($inp[selesaiCuti])."', namaCuti='$inp[namaCuti]', jatahCuti='".setAngka($inp[jatahCuti])."', toleransiCuti='".setAngka($inp[toleransiCuti])."', masaCuti='".setAngka($inp[masaCuti])."', keteranganCuti='$inp[keteranganCuti]', statusCuti='$inp[statusCuti]', updateBy='$cUsername', updateTime='".date('Y-m-d H:i:s')."' where idCuti='$par[idCuti]'";
+		db($sql);
+				
+		echo "<script>closeBox();reloadPage();</script>";
+	}
+	
+	function tambah(){
+		global $db,$s,$inp,$par,$cUsername;				
+		repField();
+		$idCuti = getField("select idCuti from dta_cuti order by idCuti desc limit 1")+1;		
+		
+		update();
+		
+		$sql="insert into dta_cuti (idCuti, idLokasi, mulaiCuti, selesaiCuti, namaCuti, jatahCuti, toleransiCuti, masaCuti, keteranganCuti, statusCuti, createBy, createTime) values ('$idCuti', '$inp[idLokasi]', '".setTanggal($inp[mulaiCuti])."', '".setTanggal($inp[selesaiCuti])."', '$inp[namaCuti]', '".setAngka($inp[jatahCuti])."', '".setAngka($inp[toleransiCuti])."', '".setAngka($inp[masaCuti])."', '$inp[keteranganCuti]', '$inp[statusCuti]', '$cUsername', '".date('Y-m-d H:i:s')."')";
+		db($sql);
+				
+		echo "<script>closeBox();reloadPage();</script>";
+	}
+	
+	function update(){
+		global $db,$s,$inp,$par,$cUsername;				
+		repField();		
+		$plafon_id = 723;
+		$satuan_id = 728;
+		
+		list($mulaiCuti, $selesaiCuti) = explode("\t", getField("select concat(mulaiCuti, '\t', selesaiCuti) from dta_cuti where idCuti='$par[idCuti]'"));
+		$sql="delete from emp_plafon where mulai='".$mulaiCuti."' and selesai='".$selesaiCuti."' and plafon_id='".$plafon_id."'";
+		db($sql);
+		
+		if(!empty($par[idLokasi])) $filter = "where location='".$par[idLokasi]."'";
+		$sql="select * from dta_pegawai ".$filter." order by id";
+		$res=db($sql);
+		while($r=mysql_fetch_array($res)){
+									
+			$sql="insert into emp_plafon (parent_id, plafon_id, satuan_id, plafon_value, satuan_pos, mulai, selesai, toleransi, remark, cre_by, cre_date) values ($r[id], $plafon_id, $satuan_id, '".setAngka($inp[jatahCuti])."', 'b', '".setTanggal($inp[mulaiCuti])."', '".setTanggal($inp[selesaiCuti])."', '".setAngka($inp[toleransiCuti])."', '$inp[keteranganCuti]', '$cUsername', '".date('Y-m-d H:i:s')."')";			
+			
+			if(
+				selisihBulan($r[join_date], setTanggal($inp[mulaiCuti])) >= setAngka($inp[masaCuti]) &&
+				$r[join_date] < setTanggal($inp[mulaiCuti]) && !empty($r[join_date])
+			) db($sql);
+		}
+	}
+	
+	function form(){
+		global $db,$s,$inp,$par,$arrTitle,$arrParameter,$menuAccess;
+		
+		$sql="select * from dta_cuti where idCuti='$par[idCuti]'";
+		$res=db($sql);
+		$r=mysql_fetch_array($res);						
+		
+		$false =  $r[statusCuti] == "f" ? "checked=\"checked\"" : "";		
+		$true =  empty($false) ? "checked=\"checked\"" : "";		
+		
+		setValidation("is_null","inp[namaCuti]","anda harus mengisi tipe cuti");
+		setValidation("is_null","inp[jatahCuti]","anda harus mengisi jumlah");
+		setValidation("is_null","mulaiCuti","anda harus mengisi masa berlaku");
+		setValidation("is_null","selesaiCuti","anda harus mengisi masa berlaku");
+		setValidation("is_null","inp[masaCuti]","anda harus mengisi masa kerja lebih dari");		
+		setValidation("is_null","inp[toleransiCuti]","anda harus mengisi tenggat waktu");		
+		$text = getValidation();
+
+		$text.="<div id=\"prosesImg\" align=\"center\" style=\"z-index:9; background:#fff; position:absolute; width:100%; height:100%; opacity:0.5; display:none;\">						
+					<img src=\"styles/images/loaders/loader6.gif\" style=\"margin-top:250px;\">
+				</div>
+				<div class=\"centercontent contentpopup\">
+				<div class=\"pageheader\">
+					<h1 class=\"pagetitle\">".$arrTitle[$s]."</h1>
+					".getBread(ucwords($par[mode]." data"))."								
+				</div>
+				<div class=\"contentwrapper\">
+				<form id=\"form\" name=\"form\" method=\"post\" class=\"stdform\" action=\"?_submit=1".getPar($par)."\" onsubmit=\"return validation(document.form);\" enctype=\"multipart/form-data\">	
+				<div id=\"general\" style=\"margin-top:20px;\">					
+					<p>
+						<label class=\"l-input-small\">Tipe Cuti</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[namaCuti]\" name=\"inp[namaCuti]\"  value=\"$r[namaCuti]\" class=\"mediuminput\" style=\"width:300px;\" />
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Jumlah</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[jatahCuti]\" name=\"inp[jatahCuti]\"  value=\"".getAngka($r[jatahCuti])."\" class=\"mediuminput\" style=\"width:50px; text-align:right;\" onkeyup=\"cekAngka(this);\"/> hari
+						</div>
+					</p>					
+					<p>
+						<label class=\"l-input-small\">Keterangan</label>
+						<div class=\"field\">
+							<textarea id=\"inp[keteranganCuti]\" name=\"inp[keteranganCuti]\" rows=\"3\" cols=\"50\" class=\"longinput\" style=\"height:50px; width:400px;\">$r[keteranganCuti]</textarea>
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Masa Berlaku</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"mulaiCuti\" name=\"inp[mulaiCuti]\" size=\"10\" maxlength=\"10\" value=\"".getTanggal($r[mulaiCuti])."\" class=\"vsmallinput hasDatePicker\" /> s.d <input type=\"text\" id=\"selesaiCuti\" name=\"inp[selesaiCuti]\" size=\"10\" maxlength=\"10\" value=\"".getTanggal($r[selesaiCuti])."\" class=\"vsmallinput hasDatePicker\" />
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Masa Kerja lebih dari</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[masaCuti]\" name=\"inp[masaCuti]\"  value=\"".getAngka($r[masaCuti])."\" class=\"mediuminput\" style=\"width:50px; text-align:right;\" onkeyup=\"cekAngka(this);\"/> bulan
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Tenggat Waktu</label>
+						<div class=\"field\">
+							<input type=\"text\" id=\"inp[toleransiCuti]\" name=\"inp[toleransiCuti]\"  value=\"".getAngka($r[toleransiCuti])."\" class=\"mediuminput\" style=\"width:50px; text-align:right;\" onkeyup=\"cekAngka(this);\"/> bulan
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Berlaku Untuk</label>
+						<div class=\"field\">
+							".comboData("select * from mst_data where statusData='t' and kodeCategory='".$arrParameter[7]."' order by urutanData","kodeData","namaData","inp[idLokasi]","Seluruh Pegawai",$r[idLokasi],"", "310px")."
+						</div>
+					</p>
+					<p>
+						<label class=\"l-input-small\">Status</label>
+						<div class=\"fradio\">
+							<input type=\"radio\" id=\"true\" name=\"inp[statusCuti]\" value=\"t\" $true /> <span class=\"sradio\">Aktif</span>
+							<input type=\"radio\" id=\"false\" name=\"inp[statusCuti]\" value=\"f\" $false /> <span class=\"sradio\">Tidak Aktif</span>
+						</div>
+					</p>
+				</div>				
+				<p>
+					<input type=\"submit\" class=\"submit radius2\" name=\"btnSimpan\" value=\"Simpan\" onclick=\"return save('".getPar($par,"mode")."');\"/>
+					<input type=\"button\" class=\"cancel radius2\" value=\"Batal\" onclick=\"closeBox();\"/>
+				</p>
+			</form>	
+			</div>";
+		return $text;
+	}
+
+	function lihat(){
+		global $db,$s,$inp,$par,$arrTitle,$arrParameter,$menuAccess;
+		$text.="<div class=\"pageheader\">
+				<h1 class=\"pagetitle\">".$arrTitle[$s]."</h1>
+				".getBread()."
+				
+			</div>    
+			<div id=\"contentwrapper\" class=\"contentwrapper\">
+			<form action=\"\" method=\"post\" class=\"stdform\">
+			<div id=\"pos_l\" style=\"float:left;\">
+			<table>
+				<tr>
+				<td>Search : </td>
+				<td><input type=\"text\" id=\"par[filter]\" name=\"par[filter]\" style=\"width:250px;\" value=\"$par[filter]\" class=\"mediuminput\" /></td>				
+				<td><input type=\"submit\" value=\"GO\" class=\"btn btn_search btn-small\"/> </td>
+				</tr>
+			</table>
+			</div>
+			<div id=\"pos_r\">";
+		if(isset($menuAccess[$s]["add"])) $text.="<a href=\"#Add\" class=\"btn btn1 btn_document\" onclick=\"openBox('popup.php?par[mode]=add".getPar($par,"mode,idCuti")."',875,525);\"><span>Tambah Data</span></a>";
+		$text.="</div>
+			</form>
+			<br clear=\"all\" />
+			<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stdtable stdtablequick\" id=\"dyntable\">
+			<thead>
+				<tr>
+					<th width=\"20\">No.</th>
+					<th>Tipe Cuti</th>
+					<th width=\"75\">Jumlah</th>
+					<th width=\"150\">Masa Berlaku</th>
+					<th width=\"75\">Tenggat Waktu</th>
+					<th>Berlaku Untuk</th>
+					<th width=\"50\">Status</th>";
+				if(isset($menuAccess[$s]["edit"]) || isset($menuAccess[$s]["delete"])) $text.="<th width=\"50\">Kontrol</th>";
+		$text.="</tr>
+			</thead>
+			<tbody>";
+		
+		$filter = "where idCuti > 0";
+		if(!empty($par[filter]))			
+		$filter.= " and (
+			lower(t1.namaCuti) like '%".strtolower($par[filter])."%'
+			or lower(t2.namaData) like '%".strtolower($par[filter])."%'
+		)";
+		
+		$sql="select * from dta_cuti t1 left join mst_data t2 on (t1.idLokasi=t2.kodeData) $filter order by idCuti";
+		$res=db($sql);
+		while($r=mysql_fetch_array($res)){			
+			$no++;
+			$r[namaData] = empty($r[namaData]) ? "Seluruh Pegawai" : $r[namaData];
+			$toleransiCuti = empty($r[toleransiCuti]) ? "" : getAngka($r[toleransiCuti])." bulan";
+			
+			$statusCuti = $r[statusCuti] == "t"?
+			"<img src=\"styles/images/t.png\" title='Aktif'>":
+			"<img src=\"styles/images/f.png\" title='Tidak Aktif'>";
+			
+			$text.="<tr>
+					<td>$no.</td>
+					<td>$r[namaCuti]</td>
+					<td align=\"right\">".getAngka($r[jatahCuti])." hari</td>
+					<td align=\"center\">".getTanggal($r[mulaiCuti])." s.d ".getTanggal($r[selesaiCuti])."</td>
+					<td align=\"right\">".$toleransiCuti."</td>
+					<td>$r[namaData]</td>
+					<td align=\"center\">$statusCuti</td>";
+			if(isset($menuAccess[$s]["edit"]) || isset($menuAccess[$s]["delete"])){
+				$text.="<td align=\"center\">";				
+				if(isset($menuAccess[$s]["edit"])) $text.="<a href=\"#Edit\" title=\"Edit Data\" class=\"edit\"  onclick=\"openBox('popup.php?par[mode]=edit&par[idCuti]=$r[idCuti]".getPar($par,"mode,idCuti")."',875,525);\"><span>Edit</span></a>";				
+				if(isset($menuAccess[$s]["delete"])) $text.="<a href=\"?par[mode]=del&par[idCuti]=$r[idCuti]".getPar($par,"mode,idCuti")."\" onclick=\"return confirm('are you sure to delete data ?');\" title=\"Delete Data\" class=\"delete\"><span>Delete</span></a>";
+				$text.="</td>";
+			}
+			$text.="</tr>";				
+		}	
+		
+		$text.="</tbody>
+			</table>
+			</div>";
+		return $text;
+	}		
+	
+	function getContent($par){
+		global $db,$s,$_submit,$menuAccess;
+		switch($par[mode]){			
+			case "cek":
+				$text = cek();
+			break;
+			case "del":
+				if(isset($menuAccess[$s]["delete"])) $text = hapus(); else $text = lihat();
+			break;
+			case "edit":
+				if(isset($menuAccess[$s]["edit"])) $text = empty($_submit) ? form() : ubah(); else $text = lihat();
+			break;
+			case "add":
+				if(isset($menuAccess[$s]["add"])) $text = empty($_submit) ? form() : tambah(); else $text = lihat();
+			break;
+			default:
+				$text = lihat();
+			break;
+		}
+		return $text;
+	}	
+?>

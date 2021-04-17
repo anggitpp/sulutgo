@@ -1,0 +1,832 @@
+<?php
+
+/*
+ *  Build on pojay.dev @42A
+ */
+
+/**
+ * Description of class.recplan.inc.php
+ *
+ * @author mazte
+ */
+class RecPlan extends DAL {
+
+  public $id;
+  public $cat;
+  public $no;
+  public $empId;
+  public $subject;
+  public $proposeDate;
+  public $needDate;
+  public $divId;
+  public $locId;
+  public $posAvailable;
+  public $personNeeded;
+  public $eduId;
+  public $eduFacId;
+  public $eduDeptId;
+  public $eduFacId2;
+  public $eduDeptId2;
+  public $eduFacId3;
+  public $eduDeptId3;
+  public $empSta;
+  public $male;
+  public $female;
+  public $ageFrom;
+  public $ageTo;
+  public $reportTo;
+  public $character;
+  public $experience;
+  public $expertise;
+  public $jobDesk;
+  public $abilites;
+  public $reason;
+  public $disposition;
+  public $apprDivSta;
+  public $apprDivBy;
+  public $apprDivDate;
+  public $apprDivRemark;
+  public $apprSdmSta;
+  public $apprSdmBy;
+  public $apprSdmDate;
+  public $apprSdmRemark;
+  public $remark;
+  public $creBy;
+  public $creDate;
+  public $updBy;
+  public $updDate;
+
+  public function __construct($dbo = NULL) {
+    if ($dbo == NULL) {
+      parent::__construct($dbo);
+    }
+  }
+
+  function persist() {
+    $sql = "INSERT INTO rec_plan (
+cat,
+no,
+emp_id,
+subject,
+propose_date,
+need_date,
+div_id,
+loc_id,
+pos_available,
+person_needed,
+edu_id,
+edu_fac_id,
+edu_dept_id,
+edu_fac_id2,
+edu_dept_id2,
+edu_fac_id3,
+edu_dept_id3,
+emp_sta,
+male,
+female,
+age_from,
+age_to,
+report_to,
+`character`,
+experience,
+expertise,
+job_desk,
+abilites,
+reason,
+disposition,
+appr_div_sta,
+appr_div_by,
+appr_div_date,
+appr_div_remark,
+appr_sdm_sta,
+appr_sdm_by,
+appr_sdm_date,
+appr_sdm_remark,
+remark,
+
+          cre_by,
+          cre_date
+          ) VALUES (
+
+:pCat, 
+:pNo, 
+:pEmpId, 
+:pSubject, 
+:pProposeDate, 
+:pNeedDate, 
+:pDivId, 
+:pLocId, 
+:pPosAvailable, 
+:pPersonNeeded, 
+:pEduId, 
+:pEduFacId, 
+:pEduDeptId, 
+:pEduFacId2, 
+:pEduDeptId2,
+:pEduFacId3, 
+:pEduDeptId3,
+:pEmpSta, 
+:pMale, 
+:pFemale, 
+:pAgeFrom, 
+:pAgeTo, 
+:pReportTo, 
+:pCharacter, 
+:pExperience, 
+:pExpertise, 
+:pJobDesk, 
+:pAbilites, 
+:pReason, 
+:pDisposition, 
+:pApprDivSta, 
+:pApprDivBy, 
+:pApprDivDate, 
+:pApprDivRemark, 
+:pApprSdmSta, 
+:pApprSdmBy, 
+:pApprSdmDate, 
+:pApprSdmRemark, 
+:pRemark, 
+
+
+          :pCreBy,
+          :pCreDate
+          )";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->creBy = $cUsername;
+      $this->creDate = date('Y-m-d H:i:s');
+	  if(empty($this->empId)) $this->empId = 0;
+	  if(empty($this->eduFacId2)) $this->eduFacId2 = 0;
+	  if(empty($this->eduDeptId2)) $this->eduDeptId2 = 0;
+	  if(empty($this->eduFacId3)) $this->eduFacId3 = 0;
+	  if(empty($this->eduDeptId3)) $this->eduDeptId3 = 0;
+	  
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $this->cat, PDO::PARAM_STR);
+      $stmt->bindParam(':pNo', $this->no, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmpId', $this->empId, PDO::PARAM_STR);
+      $stmt->bindParam(':pSubject', $this->subject, PDO::PARAM_STR);
+      $stmt->bindParam(':pProposeDate', $this->proposeDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pNeedDate', $this->needDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pDivId', $this->divId, PDO::PARAM_STR);
+      $stmt->bindParam(':pLocId', $this->locId, PDO::PARAM_STR);
+      $stmt->bindParam(':pPosAvailable', $this->posAvailable, PDO::PARAM_STR);
+      $stmt->bindParam(':pPersonNeeded', $this->personNeeded, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduId', $this->eduId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduFacId', $this->eduFacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId', $this->eduDeptId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduFacId2', $this->eduFacId2, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId2', $this->eduDeptId2, PDO::PARAM_STR);	  
+      $stmt->bindParam(':pEduFacId3', $this->eduFacId3, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId3', $this->eduDeptId3, PDO::PARAM_STR);	  
+      $stmt->bindParam(':pEmpSta', $this->empSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pMale', $this->male, PDO::PARAM_STR);
+      $stmt->bindParam(':pFemale', $this->female, PDO::PARAM_STR);
+      $stmt->bindParam(':pAgeFrom', $this->ageFrom, PDO::PARAM_STR);
+      $stmt->bindParam(':pAgeTo', $this->ageTo, PDO::PARAM_STR);
+      $stmt->bindParam(':pReportTo', $this->reportTo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCharacter', $this->character, PDO::PARAM_STR);
+      $stmt->bindParam(':pExperience', $this->experience, PDO::PARAM_STR);
+      $stmt->bindParam(':pExpertise', $this->expertise, PDO::PARAM_STR);
+      $stmt->bindParam(':pJobDesk', $this->jobDesk, PDO::PARAM_STR);
+      $stmt->bindParam(':pAbilites', $this->abilites, PDO::PARAM_STR);
+      $stmt->bindParam(':pReason', $this->reason, PDO::PARAM_STR);
+      $stmt->bindParam(':pDisposition', $this->disposition, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivSta', $this->apprDivSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivBy', $this->apprDivBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivDate', $this->apprDivDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivRemark', $this->apprDivRemark, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmSta', $this->apprSdmSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmBy', $this->apprSdmBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmDate', $this->apprSdmDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmRemark', $this->apprSdmRemark, PDO::PARAM_STR);
+      $stmt->bindParam(':pRemark', $this->remark, PDO::PARAM_STR);
+
+
+      $stmt->bindParam(':pCreBy', $this->creBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pCreDate', $this->creDate, PDO::PARAM_STR);
+		
+      $stmt->execute();
+      $this->id = $this->db->lastInsertId();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function update() {
+    $sql = " UPDATE rec_plan SET
+      
+cat=:pCat,
+no=:pNo,
+emp_id=:pEmpId,
+subject=:pSubject,
+propose_date=:pProposeDate,
+need_date=:pNeedDate,
+div_id=:pDivId,
+loc_id=:pLocId,
+pos_available=:pPosAvailable,
+person_needed=:pPersonNeeded,
+edu_id=:pEduId,
+edu_fac_id=:pEduFacId,
+edu_dept_id=:pEduDeptId,
+edu_fac_id2=:pEduFacId2,
+edu_dept_id2=:pEduDeptId2,
+edu_fac_id3=:pEduFacId3,
+edu_dept_id3=:pEduDeptId3,
+emp_sta=:pEmpSta,
+male=:pMale,
+female=:pFemale,
+age_from=:pAgeFrom,
+age_to=:pAgeTo,
+report_to=:pReportTo,
+`character`=:pCharacter,
+experience=:pExperience,
+expertise=:pExpertise,
+job_desk=:pJobDesk,
+abilites=:pAbilites,
+reason=:pReason,
+disposition=:pDisposition,
+appr_div_sta=:pApprDivSta,
+appr_div_by=:pApprDivBy,
+appr_div_date=:pApprDivDate,
+appr_div_remark=:pApprDivRemark,
+appr_sdm_sta=:pApprSdmSta,
+appr_sdm_by=:pApprSdmBy,
+appr_sdm_date=:pApprSdmDate,
+appr_sdm_remark=:pApprSdmRemark,
+remark=:pRemark,
+
+          upd_by=:pUpdBy,
+          upd_date=:pUpdDate
+          WHERE id=:pId";
+    try {
+      global $db,$cUsername;
+      date_default_timezone_set('Asia/Jakarta');
+      $this->updBy = $cUsername;
+      $this->updDate = date('Y-m-d H:i:s');
+      $stmt = $this->db->prepare($sql);
+      if(empty($this->empId)) $this->empId = 0;
+	  if(empty($this->eduFacId2)) $this->eduFacId2 = 0;
+	  if(empty($this->eduDeptId2)) $this->eduDeptId2 = 0;
+	  if(empty($this->eduFacId3)) $this->eduFacId3 = 0;
+	  if(empty($this->eduDeptId3)) $this->eduDeptId3 = 0;
+	  
+      $stmt->bindParam(':pCat', $this->cat, PDO::PARAM_STR);
+      $stmt->bindParam(':pNo', $this->no, PDO::PARAM_STR);
+      $stmt->bindParam(':pEmpId', $this->empId, PDO::PARAM_STR);
+      $stmt->bindParam(':pSubject', $this->subject, PDO::PARAM_STR);
+      $stmt->bindParam(':pProposeDate', $this->proposeDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pNeedDate', $this->needDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pDivId', $this->divId, PDO::PARAM_STR);
+      $stmt->bindParam(':pLocId', $this->locId, PDO::PARAM_STR);
+      $stmt->bindParam(':pPosAvailable', $this->posAvailable, PDO::PARAM_STR);
+      $stmt->bindParam(':pPersonNeeded', $this->personNeeded, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduId', $this->eduId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduFacId', $this->eduFacId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId', $this->eduDeptId, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduFacId2', $this->eduFacId2, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId2', $this->eduDeptId2, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduFacId3', $this->eduFacId3, PDO::PARAM_STR);
+      $stmt->bindParam(':pEduDeptId3', $this->eduDeptId3, PDO::PARAM_STR);	  
+      $stmt->bindParam(':pEmpSta', $this->empSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pMale', $this->male, PDO::PARAM_STR);
+      $stmt->bindParam(':pFemale', $this->female, PDO::PARAM_STR);
+      $stmt->bindParam(':pAgeFrom', $this->ageFrom, PDO::PARAM_STR);
+      $stmt->bindParam(':pAgeTo', $this->ageTo, PDO::PARAM_STR);
+      $stmt->bindParam(':pReportTo', $this->reportTo, PDO::PARAM_STR);
+      $stmt->bindParam(':pCharacter', $this->character, PDO::PARAM_STR);
+      $stmt->bindParam(':pExperience', $this->experience, PDO::PARAM_STR);
+      $stmt->bindParam(':pExpertise', $this->expertise, PDO::PARAM_STR);
+      $stmt->bindParam(':pJobDesk', $this->jobDesk, PDO::PARAM_STR);
+      $stmt->bindParam(':pAbilites', $this->abilites, PDO::PARAM_STR);
+      $stmt->bindParam(':pReason', $this->reason, PDO::PARAM_STR);
+      $stmt->bindParam(':pDisposition', $this->disposition, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivSta', $this->apprDivSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivBy', $this->apprDivBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivDate', $this->apprDivDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprDivRemark', $this->apprDivRemark, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmSta', $this->apprSdmSta, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmBy', $this->apprSdmBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmDate', $this->apprSdmDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pApprSdmRemark', $this->apprSdmRemark, PDO::PARAM_STR);
+      $stmt->bindParam(':pRemark', $this->remark, PDO::PARAM_STR);
+
+
+      $stmt->bindParam(':pUpdBy', $this->updBy, PDO::PARAM_STR);
+      $stmt->bindParam(':pUpdDate', $this->updDate, PDO::PARAM_STR);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function destroy() {
+    $sql = " DELETE FROM rec_plan
+				 WHERE id=:pId
+				 ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      return 1;
+    } catch (Exception $ex) {
+      var_dump($ex);
+      return 0;
+    }
+  }
+
+  function getById() {
+    $sql = " SELECT 
+      
+id,
+cat,
+no,
+emp_id,
+subject,
+propose_date,
+need_date,
+div_id,
+loc_id,
+pos_available,
+person_needed,
+edu_id,
+edu_fac_id,
+edu_dept_id,
+edu_fac_id2,
+edu_dept_id2,
+edu_fac_id3,
+edu_dept_id3,
+emp_sta,
+male,
+female,
+age_from,
+age_to,
+report_to,
+`character`,
+experience,
+expertise,
+job_desk,
+abilites,
+reason,
+disposition,
+appr_div_sta,
+appr_div_by,
+appr_div_date,
+appr_div_remark,
+appr_sdm_sta,
+appr_sdm_by,
+appr_sdm_date,
+appr_sdm_remark,
+remark,
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_plan 
+      WHERE id=:pId";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pId', $this->id, PDO::PARAM_STR);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as $row) {
+        $this->id = $row["id"];
+        $this->cat = $row["cat"];
+        $this->no = $row["no"];
+        $this->empId = $row["emp_id"];
+        $this->subject = $row["subject"];
+        $this->proposeDate = $row["propose_date"];
+        $this->needDate = $row["need_date"];
+        $this->divId = $row["div_id"];
+        $this->locId = $row["loc_id"];
+        $this->posAvailable = $row["pos_available"];
+        $this->personNeeded = $row["person_needed"];
+        $this->eduId = $row["edu_id"];
+        $this->eduFacId = $row["edu_fac_id"];
+        $this->eduDeptId = $row["edu_dept_id"];
+        $this->eduFacId2 = $row["edu_fac_id2"];
+        $this->eduDeptId2 = $row["edu_dept_id2"];
+        $this->eduFacId3 = $row["edu_fac_id3"];
+        $this->eduDeptId3 = $row["edu_dept_id3"];		
+        $this->empSta = $row["emp_sta"];
+        $this->male = $row["male"];
+        $this->female = $row["female"];
+        $this->ageFrom = $row["age_from"];
+        $this->ageTo = $row["age_to"];
+        $this->reportTo = $row["report_to"];
+        $this->character = $row["character"];
+        $this->experience = $row["experience"];
+        $this->expertise = $row["expertise"];
+        $this->jobDesk = $row["job_desk"];
+        $this->abilites = $row["abilites"];
+        $this->reason = $row["reason"];
+        $this->disposition = $row["disposition"];
+        $this->apprDivSta = $row["appr_div_sta"];
+        $this->apprDivBy = $row["appr_div_by"];
+        $this->apprDivDate = $row["appr_div_date"];
+        $this->apprDivRemark = $row["appr_div_remark"];
+        $this->apprSdmSta = $row["appr_sdm_sta"];
+        $this->apprSdmBy = $row["appr_sdm_by"];
+        $this->apprSdmDate = $row["appr_sdm_date"];
+        $this->apprSdmRemark = $row["appr_sdm_remark"];
+        $this->remark = $row["remark"];
+
+
+
+        $this->creBy = $row["cre_by"];
+        $this->creDate = $row["cre_date"];
+        $this->updBy = $row["upd_by"];
+        $this->updDate = $row["upd_date"];
+      }
+      $stmt->closeCursor();
+      return $this;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function getAll() {
+    $sql = " SELECT 
+
+      cre_by,
+      cre_date,
+      upd_by,
+      upd_date
+      FROM rec_plan ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $ret = array();
+      foreach ($result as $row) {
+        $ret0 = new RecPlan("C");
+
+        $ret0->creBy = $row["cre_by"];
+        $ret0->creDate = $row["cre_date"];
+        $ret0->updBy = $row["upd_by"];
+        $ret0->updDate = $row["upd_date"];
+        $ret[] = $ret0;
+      }
+      $stmt->closeCursor();
+      return $ret;
+    } catch (Exception $ex) {
+      var_dump($ex);
+    }
+  }
+
+  function loadTable($cat, $cDivisi, $cYear) {
+    $sql = " SELECT
+
+t1.id id,
+t1.cat cat,
+t1.no no,
+t1.emp_id empId,
+t1.subject subject,
+t1.propose_date proposeDate,
+t1.need_date needDate,
+t1.div_id divId,
+t1.loc_id locId,
+t1.pos_available posAvailable,
+t1.person_needed personNeeded,
+t1.edu_id eduId,
+t1.edu_fac_id eduFacId,
+t1.edu_dept_id eduDeptId,
+t1.emp_sta empSta,
+t1.male male,
+t1.female female,
+t1.age_from ageFrom,
+t1.age_to ageTo,
+t1.report_to reportTo,
+t1.character `character`,
+t1.experience experience,
+t1.expertise expertise,
+t1.job_desk jobDesk,
+t1.abilites abilites,
+t1.reason reason,
+t1.disposition disposition,
+t1.appr_div_sta apprDivSta,
+t1.appr_div_by apprDivBy,
+t1.appr_div_date apprDivDate,
+t1.appr_div_remark apprDivRemark,
+t1.appr_sdm_sta apprSdmSta,
+t1.appr_sdm_by apprSdmBy,
+t1.appr_sdm_date apprSdmDate,
+t1.appr_sdm_remark apprSdmRemark,
+t1.remark remark,
+date(t1.cre_date) reqDate,
+
+t2.namaData eduName,
+t3.namaData eduFacName,
+t4.namaData eduDeptName,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_plan t1
+      JOIN mst_data t2 on t1.edu_id=t2.kodeData
+      LEFT JOIN mst_data t3 on t1.edu_fac_id=t3.kodeData
+      LEFT JOIN mst_data t4 on t1.edu_dept_id=t4.kodeData
+      LEFT JOIN emp t5 on t1.emp_id=t5.id 
+      WHERE t1.cat=:pCat
+      AND YEAR(t1.propose_date)='$cYear'
+      ";
+    if ($cDivisi != "") {
+      $sql.=" AND t1.div_id=$cDivisi ";
+    }
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $cat);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  function loadTableReport($cat, $cDivisi, $cYear, $stDate, $edDate) {
+    $sql = " SELECT
+
+t1.id id,
+t1.cat cat,
+t1.no no,
+t1.emp_id empId,
+t1.subject subject,
+DATE_FORMAT(t1.propose_date,'%d-%m-%Y') proposeDate,
+DATE_FORMAT(t1.need_date,'%d-%m-%Y') needDate,
+t1.div_id divId,
+t1.loc_id locId,
+t1.pos_available posAvailable,
+t1.person_needed personNeeded,
+t1.edu_id eduId,
+t1.edu_fac_id eduFacId,
+t1.edu_dept_id eduDeptId,
+t1.emp_sta empSta,
+t1.male male,
+t1.female female,
+t1.age_from ageFrom,
+t1.age_to ageTo,
+t1.report_to reportTo,
+t1.character `character`,
+t1.experience experience,
+t1.expertise expertise,
+t1.job_desk jobDesk,
+t1.abilites abilites,
+t1.reason reason,
+t1.disposition disposition,
+t1.appr_div_sta apprDivSta,
+t1.appr_div_by apprDivBy,
+t1.appr_div_date apprDivDate,
+t1.appr_div_remark apprDivRemark,
+t1.appr_sdm_sta apprSdmSta,
+t1.appr_sdm_by apprSdmBy,
+t1.appr_sdm_date apprSdmDate,
+t1.appr_sdm_remark apprSdmRemark,
+t1.remark remark,
+date(t1.cre_date) reqDate,
+
+t2.namaData eduName,
+t3.namaData eduFacName,
+t4.namaData eduDeptName,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_plan t1
+      JOIN mst_data t2 on t1.edu_id=t2.kodeData
+      LEFT JOIN mst_data t3 on t1.edu_fac_id=t3.kodeData
+      LEFT JOIN mst_data t4 on t1.edu_dept_id=t4.kodeData
+      JOIN emp t5 on t1.emp_id=t5.id 
+      WHERE appr_sdm_sta=3
+      AND YEAR(t1.propose_date)='$cYear'
+      ";
+    if (!empty($cat)) {
+      $sql.=" AND t1.cat=:pCat ";
+    }
+    if ($cDivisi != "") {
+      $sql.=" AND t1.div_id=$cDivisi ";
+    }
+    if (!empty($stDate) && !empty($edDate)) {
+      $sql.=" AND t1.propose_date BETWEEN '$stDate' AND '$edDate' ";
+    }
+//    echo $sql;
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $cat);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  function exportToExcelReport($cat, $cDivisi, $cYear, $stDate, $edDate) {
+    $sql = "SELECT
+t1.no `Nomor`,
+t5.reg_no `NPP Pemohon`,
+t5.name `Nama Pemohon`,
+t6.pos_name `Jabatan Pemohon`,
+t7.namaData `Divisi Pemohon`,
+t10.namaData `Lokasi Pemohon`,
+CASE WHEN t1.cat=1 THEN 'Usulan' ELSE 'Kebutuhan' END `Kategori`,
+t1.`subject` `Judul`,
+DATE_FORMAT(t1.propose_date,'%d-%m-%Y') `Tgl. Pengajuan`,
+DATE_FORMAT(t1.need_date,'%d-%m-%Y') `Tgl. Kebutuhan`,
+t1.pos_available `Posisi`,
+t8.namaData `Divisi`,
+t2.namaData `Pendidikan`,
+t3.namaData `Fakultas`,
+t4.namaData `Jurusan`,
+CASE 
+WHEN IFNULL(t1.male,0)=1 AND IFNULL(t1.female,0)=1 THEN 'Laki Laki / Perempuan' 
+WHEN IFNULL(t1.male,0)=1 AND IFNULL(t1.female,0)=0 THEN 'Laki Laki' 
+WHEN IFNULL(t1.male,0)=0 AND IFNULL(t1.female,0)=1 THEN 'Perempuan' 
+ELSE ''
+END `Jenis Kelamin`,
+t9.namaData `Status Pegawai`,
+t1.person_needed `Jumlah`, CONCAT(t1.age_from, ' s/d ' ,t1.age_to) `Usia`,
+t1.report_to `Yang bersangkutan bertanggung jawab kpd`,
+t1.`character` `Karakteristik`, t1.job_desk `Uraian Tugas Utama`,
+t1.expertise `Keahlian Khusus`, t1.abilites `Kemampuan Tambahan`,
+t1.reason `Alasan Permintaan`, t1.disposition `Hal-hal yang diangap penting untuk segera dilakukan`
+
+FROM rec_plan t1
+JOIN mst_data t2 on t1.edu_id=t2.kodeData
+LEFT JOIN mst_data t3 on t1.edu_fac_id=t3.kodeData
+LEFT JOIN mst_data t4 on t1.edu_dept_id=t4.kodeData
+LEFT JOIN mst_data t8 ON t1.div_id=t8.kodeData
+LEFT JOIN mst_data t9 ON t1.emp_sta=t9.kodeData
+LEFT JOIN mst_data t10 ON t1.loc_id=t10.kodeData
+JOIN emp t5 on t1.emp_id=t5.id 
+LEFT JOIN emp_phist t6 ON t5.id=t6.parent_id and t6.status=1
+LEFT JOIN mst_data t7 ON t7.kodeData=t6.div_id
+      WHERE appr_sdm_sta=3
+      AND YEAR(t1.propose_date)='$cYear'
+      ";
+    if (!empty($cat)) {
+      $sql.=" AND t1.cat=:pCat ";
+    }
+    if ($cDivisi != "") {
+      $sql.=" AND t1.div_id=$cDivisi ";
+    }
+    if (!empty($stDate) && !empty($edDate)) {
+      $sql.=" AND t1.propose_date BETWEEN '$stDate' AND '$edDate' ";
+    }
+//    echo $sql;
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $cat);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return $result;
+  }
+
+  function loadTableVacation($ctype, $cYear) {
+    $sql = " SELECT
+
+t1.id id,
+t1.cat cat,
+t1.no no,
+t1.emp_id empId,
+t1.subject subject,
+t1.propose_date proposeDate,
+t1.need_date needDate,
+t1.div_id divId,
+t1.loc_id locId,
+t1.pos_available posAvailable,
+t1.person_needed personNeeded,
+t1.edu_id eduId,
+t1.edu_fac_id eduFacId,
+t1.edu_dept_id eduDeptId,
+t1.emp_sta empSta,
+t1.male male,
+t1.female female,
+t1.age_from ageFrom,
+t1.age_to ageTo,
+t1.report_to reportTo,
+t1.character `character`,
+t1.experience experience,
+t1.expertise expertise,
+t1.job_desk jobDesk,
+t1.abilites abilites,
+t1.reason reason,
+t1.disposition disposition,
+t1.appr_div_sta apprDivSta,
+t1.appr_div_by apprDivBy,
+t1.appr_div_date apprDivDate,
+t1.appr_div_remark apprDivRemark,
+t1.appr_sdm_sta apprSdmSta,
+t1.appr_sdm_by apprSdmBy,
+t1.appr_sdm_date apprSdmDate,
+t1.appr_sdm_remark apprSdmRemark,
+t1.remark remark,
+date(t1.cre_date) reqDate,
+
+t2.namaData eduName,
+t3.namaData eduFacName,
+t4.namaData eduDeptName,
+
+      t1.cre_by creBy,
+      t1.cre_date creDate,
+      t1.upd_by updBy,
+      t1.upd_date updDate
+      FROM rec_plan t1
+      JOIN mst_data t2 on t1.edu_id=t2.kodeData
+      LEFT JOIN mst_data t3 on t1.edu_fac_id=t3.kodeData
+      LEFT JOIN mst_data t4 on t1.edu_dept_id=t4.kodeData
+      JOIN emp t5 on t1.emp_id=t5.id 
+      WHERE t1.appr_sdm_sta=3
+      AND YEAR(t1.propose_date)='$cYear'
+      ";
+    if ($ctype != "") {
+      $sql.=" AND t1.cat=$ctype";
+    }
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $stmt->closeCursor();
+    } catch (PDOException $ex) {
+      var_dump($ex->errorInfo);
+    }
+    return json_encode(array("sEcho" => 1, "aaData" => $result));
+  }
+
+  private function populateWithPost() {
+    foreach ($_POST as $var => $value) {
+      if (property_exists($this, $var)) {
+        if (!is_array($value)) {
+          $this->$var = htmlentities($value);
+          if ((strpos($var, "Date") > -1 || strpos(strtolower($var), "tanggal") > -1) && ($value == "" || $value == "0000-00-00")) {
+            $this->$var = null;
+          } else if ($value == "" || $value == "0000-00-00 00:00:00" || $value == "0000-00-00") {
+            $this->$var = null;
+          }
+        } else {
+          $this->$var = implode(";", $value);
+        }
+      }
+    }
+    return $this;
+  }
+
+  function generateRecNo() {
+    $sql = "
+      SELECT COALESCE(MAX(CAST(SUBSTR(a.no,1,4) AS UNSIGNED)),0)+1 rec_no
+      FROM rec_plan a
+      WHERE YEAR(a.cre_date)=YEAR(CURRENT_DATE())
+      AND a.cat=:pCat
+      ";
+    try {
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindParam(':pCat', $this->cat);
+      $stmt->execute();
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($result as $row) {
+        $ret = $row["rec_no"];
+      }
+      $stmt->closeCursor();
+      return $ret;
+    } catch (Exception $ex) {
+      return $ex->getMessage();
+    }
+  }
+
+  function processForm() {
+    $this->id = $_SESSION["entity_id"];
+    $this->getById();
+    $this->populateWithPost();
+    $this->cat = $_SESSION["plan_cat"];
+    if ($this->id == "") {
+      $recNo = $this->generateRecNo();
+      if ($this->cat == 1) {
+        $this->no = str_pad($recNo, 4, "0", STR_PAD_LEFT) . "/RP-U/" . getRomawi(date("n")) . "/" . date("Y");
+      } else {
+        $this->no = str_pad($recNo, 4, "0", STR_PAD_LEFT) . "/RP-K/" . getRomawi(date("n")) . "/" . date("Y");
+      }
+      $this->persist();
+    } else {
+      $this->update();
+    }
+//    var_dump($this);
+//    die();
+    return $this;
+  }
+
+}
+
+?>

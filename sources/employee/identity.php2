@@ -1,0 +1,178 @@
+<?php
+session_start();
+if (!isset($menuAccess[$s]["view"]))
+  echo "<script>logout();</script>";
+
+$_SESSION["curr_emp_id"] = (isset($_GET["empid"]) ? $_GET["empid"] : $_SESSION["curr_emp_id"] );
+if(!empty($par[idPegawai])) $_SESSION["curr_emp_id"] = $par[idPegawai];
+
+if (empty($_SESSION["curr_emp_id"])) {
+    echo 
+  "<script>
+    alert(\"Silakan memilih Pegawai terlebih dahulu...\");
+    window.location.href=\"".APP_URL . "/?c=3&p=8&m=79&s=82\";
+  </script>";
+//  header("Location: " . APP_URL . "/index.php?c=3&p=8&m=79&s=82");
+}
+$emp = new Emp();
+$emp->id = $_SESSION["curr_emp_id"];
+$emp = $emp->getById();
+
+$empc = new EmpPhist();
+$empc->parentId = $emp->id;
+$empc = $empc->getActiveParentId();
+
+$cutil = new Common();
+$ui = new UIHelper();
+?>
+</style>  <div class="pageheader">
+  <h1 class="pagetitle"><?php echo $s == 279 ? "Data Pegawai <input type=\"button\" class=\"cancel radius2\" value=\"Kembali\" onclick=\"window.location='?".getPar($par,"mode,idPegawai")."';\" style=\"float:right; margin-top:-10px;\" />" : $arrTitle[getField("select kodeInduk from app_menu where kodeMenu='$s'")] . " - " . $arrTitle[$s] ?></h1>
+  <?= getBread(" NPP " . $emp->regNo) ?>
+  <span class="pagedesc">&nbsp;</span>
+</div>
+<div id="contentwrapper" class="contentwrapper">
+  <form class="stdform" >
+    <table style="width: 100%" >
+      <tr>
+        <td style="width: 15%; padding-right: 10px; padding-top: 5px;">
+          <img alt="<?= $emp->regNo ?>" width="100%" height="200px" src="<?= APP_URL . "/files/emp/pic/" . (empty($emp->picFilename) ? "nophoto.jpg" : $emp->picFilename) ?>" >
+        </td>
+        <td style="width: 80%;vertical-align: top;">
+          <div class="widgetbox">
+            <!--<div style="margin-bottom:0px;" class="title"><h3>Data Diri Pegawai</h3></div>-->           
+            <table style="width: 100%;padding-top: -5px;" >
+              <tr>
+                <td style="padding-right: 5px;">
+                  <?php
+				  echo $ui->createPLabelSpanDisplay("Nama Lengkap", $emp->name);
+                  echo $ui->createPLabelSpanDisplay("Nama Panggilan", $emp->alias);
+                  echo $ui->createPLabelSpanDisplay("Tempat Lahir", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->birthPlace'", "description"));
+                  echo $ui->createPLabelSpanDisplay("No. KTP", $emp->ktpNo);
+                  echo $ui->createPLabelSpanDisplay("Berlaku s/d", $emp->ktpLifetime == "t" ? "Seumur Hidup" : $emp->ktpValid);
+                  echo $ui->createPLabelSpanDisplay("Jenis Kelamin", ($emp->gender == "F" ? "Perempuan" : "Laki-Laki"));
+                  ?>
+                </td>
+                <td style="width:350px;">
+                  <?php
+                  echo $ui->createPLabelSpanDisplay("NPP", $emp->regNo);
+                  echo $ui->createPLabelSpanDisplay("Tgl. Lahir", $emp->birthDate);
+                  echo $ui->createPLabelSpanDisplay("File KTP", "<a href=\"#\" onclick=\"openBox('view.php?doc=ktp&id=$emp->id',1000,500);\"><img src=\"" . getIcon($emp->ktpFilename) . "\" align=\"left\" style=\"vertical-align:middle\" ></a>", "", "fieldB");
+                  ?>
+                </td>
+              </tr>           
+            </table>									
+          </div>
+        </td>
+      </tr>
+    </table>
+	
+	<table style="width: 100%" >
+	 <tr>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Alamat sesuai KTP", nl2br($emp->ktpAddress)); ?>
+		</td>
+		<td style="width: 350px;">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Propinsi", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpProv'", "description")); ?>
+		</td>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpCity'", "description")); ?>
+		</td>
+	  </tr>
+	  <tr>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Alamat Domisili", nl2br($emp->domAddress)); ?>
+		</td>
+		<td>&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Propinsi", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domProv'", "description")); ?>
+		</td>
+		<td>
+		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domCity'", "description")); ?>
+		</td>
+	  </tr>              
+	  <tr>
+		<td>
+		  <?php
+		  echo $ui->createPLabelSpanDisplay("Telp. Rumah", $emp->phoneNo);
+		  echo $ui->createPLabelSpanDisplay("Email", $emp->email);
+		  echo $ui->createPLabelSpanDisplay("Status", $cutil->getDescription("select concat(namaData,' - ',keteranganData) description from mst_data WHERE kodeData='$emp->marital'", "description"));
+		  echo $ui->createPLabelSpanDisplay("No. NPWP", $emp->npwpNo);
+		  ?>
+		</td>
+		<td>
+		  <?php
+		  echo $ui->createPLabelSpanDisplay("Nomor HP", $emp->cellNo);
+		  ?>
+		</td>
+	  </tr>
+	</table>
+	
+	<div class="contenttitle2"><h3>POSISI SAAT INI</h3></div>		  
+          <table style="width:100%;">
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Jabatan", $empc->posName);?></td>
+				<td style="width: 350px;">&nbsp;</td>
+			</tr>
+            <tr>
+              <td>
+				<?php
+					echo $ui->createPLabelSpanDisplay("Pangkat", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->rank'", "description"));
+					#echo $ui->createPLabelSpanDisplay("Nomor SK", $empc->skNo);
+				?>
+                
+              </td>
+              <td>
+				<?php
+					echo $ui->createPLabelSpanDisplay("Grade", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->grade'", "description"));
+					#echo $ui->createPLabelSpanDisplay("Tanggal", $empc->skDate);
+				?>
+              </td>
+            </tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Direktorat", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->dirId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Divisi", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->divId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Bagian", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->deptId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Unit", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->unitId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Lokasi Kerja", $cutil->getDescription("select namaData as description from mst_data WHERE kodeData='$empc->location'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Mulai", $empc->startDate);?></td>
+				<td><?php echo $ui->createPLabelSpanDisplay("Berhenti", $empc->endDate);?></td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Atasan", $cutil->getDescription("select concat(reg_no,' - ',name) as description from emp WHERE status=535 and id='$empc->leaderId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Tata Usaha", $cutil->getDescription("select concat(reg_no,' - ',name) as description from emp WHERE status=535 and id='$empc->administrationId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Pengganti", $cutil->getDescription("select concat(reg_no,' - ',name) as description from emp WHERE status=535 and id='$empc->replacementId'", "description"));?></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><?php echo $ui->createPLabelSpanDisplay("Keterangan", $empc->remark);?></td>
+				<td>&nbsp;</td>
+			</tr>
+          </table>		  		 
+  </form>
+</div>

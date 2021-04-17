@@ -1,0 +1,424 @@
+<?php
+if(!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";
+
+
+function resize_image($file, $w, $h, $crop = false)
+{
+    list($width, $height) = getimagesize($file);
+    $r = $width / $height;
+    if ($crop) {
+        if ($width > $height) {
+            $width = ceil($width - ($width * abs($r - $w / $h)));
+        } else {
+            $height = ceil($height - ($height * abs($r - $w / $h)));
+        }
+        $newwidth = $w;
+        $newheight = $h;
+    } else {
+        if ($w / $h > $r) {
+            $newwidth = $h * $r;
+            $newheight = $h;
+        } else {
+            $newheight = $w / $r;
+            $newwidth = $w;
+        }
+    }
+    $src = imagecreatefromjpeg($file);
+    $dst = imagecreatetruecolor($newwidth, $newheight);
+    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+    return $dst;
+}
+
+function lihat(){
+    global $db,$s,$inp,$par,$arrTitle,$arrParameter,$menuAccess,$cID, $areaCheck, $cGroup;
+
+    $text.="
+		<div class=\"pageheader\">
+		<h1 class=\"pagetitle\">".$arrTitle[$s]."</h1>
+		".getBread()."
+		<span class=\"pagedesc\">&nbsp;</span>
+		</div>
+		" . empLocHeader() . "
+		<div id=\"contentwrapper\" class=\"contentwrapper\">
+		<form action=\"\" method=\"post\" class=\"stdform\">
+		<div id=\"pos_l\" style=\"float:left;\">
+		<table>
+		<tr>
+		<td>Search : </td>				
+		<td><input type=\"text\" id=\"par[filter]\" name=\"par[filter]\" style=\"width:250px;\" value=\"$par[filter]\" class=\"mediuminput\" /></td>
+		<td><input type=\"submit\" value=\"GO\" class=\"btn btn_search btn-small\"/> </td>
+		</tr>
+		</table>
+		</div>
+		<div id=\"pos_r\">";
+    if(isset($menuAccess[$s]["add"])) $text.="<a href=\"?par[mode]=add".getPar($par,"mode,idLembur")."\" class=\"btn btn1 btn_document\"><span>Tambah Data</span></a>";
+    $text.="</div>
+		</form>
+		<br clear=\"all\" />
+		<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"stdtable stdtablequick\" id=\"dyntable\">
+		<thead>
+		<tr>
+		<th width=\"20\">No.</th>
+		<th width=\"*\">Nama</th>
+		<th width=\"100\">NIK</th>
+		<th width=\"150\">Jabatan</th>
+		<th width=\"75\">Tgl. Lahir</th>
+		<th width=\"75\">Masa Kerja</th>
+		<th width=\"50\">Print</th>
+		</tr>
+		
+		</thead>
+		<tbody>";
+
+    $filter = "where id is not null";
+    if(!empty($par[filter]))
+        $filter.= " and (
+		lower(reg_no) like '%".strtolower($par[filter])."%'	
+		or lower(name) like '%".strtolower($par[filter])."%'	
+		)";
+    $arrMaster = arrayQuery("select kodeData,namaData from mst_data");
+    $sql="select *,replace( case when coalesce(leave_date,NULL) IS NULL THEN
+    CONCAT(TIMESTAMPDIFF(YEAR,  join_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, join_date,  CURRENT_DATE ) % 12, ' bln')
+    ELSE
+    CONCAT(TIMESTAMPDIFF(YEAR,  join_date, leave_date),' thn ', TIMESTAMPDIFF(MONTH, join_date,  leave_date) % 12, ' bln')
+    END,' 0 bln','') masaKerja from dta_pegawai $filter order by name";
+    $res=db($sql);
+    while($r=mysql_fetch_array($res)){
+        $no++;
+
+
+        $text.="<tr>
+			<td>$no.</td>
+			<td>".strtoupper($r[name])."</td>
+			<td>$r[reg_no]</td> 
+			<td>".$r[pos_name]."</td>
+			<td align=\"center\">".getTanggal($r[birth_date])."</td>
+			<td align=\"center\">".$r[masaKerja]."</td>
+			<td align=\"center\"> <a href=\"#\" class=\"print\" title=\"Cetak Form\" onclick=\"openBox('ajax.php?par[mode]=print&par[id]=$r[id]".getPar($par,"mode,id")."',1200,600);\" ><span>Cetak</span></a>
+
+			</td>
+			</tr>";
+    }
+
+    $text.="</tbody>
+		</table>
+		</div>";
+    return $text;
+}
+
+function pdf(){
+    global $db,$s,$inp,$par,$fFile,$arrTitle,$arrParam;
+    require_once 'plugins/PHPPdf.php';
+
+    $arrMaster = arrayQuery("select kodeData, namaData from mst_data");
+    $arrName = arrayQuery("select id, name from emp");
+
+    $sql="select *,(CASE WHEN gender = 'M' THEN 'Laki-Laki' ELSE (CASE WHEN gender = 'F' THEN 'Perempuan' ELSE '' END) END) as gender from emp where id = '$par[id]'";
+    $res=db($sql);
+    $r=mysql_fetch_array($res);
+
+    $r_[join_date] = $r[join_date];
+    $r_[leave_date] = $r[leave_date];
+    $sql__="select * from emp_char where parent_id = '$par[id]'";
+    $res__=db($sql__);
+    $r__=mysql_fetch_array($res__);
+
+    $pdf = new PDF('P','mm','A4');
+    $pdf->AddPage();
+    $pdf->SetLeftMargin(15);
+
+    $gambar = "images/bank-sulutgo.jpg";
+    $pdf->Image($gambar,13,5,40);
+
+    $pdf->Cell(30,20,'',0,0,'L');
+    if(!empty($r[pic_filename])){
+        $gambar = "files/emp/pic/".$r[pic_filename];
+
+        $pdf->Image($gambar, 130,40,35);
+    }else{
+        $gambar = "files/emp/pic/nophoto.jpg";
+        $pdf->Image($gambar,130,40,40);
+    }
+    $pdf->Cell(40,6,'',0,0,'L');
+    // $pdf->Ln(1);
+
+
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',12);
+    $pdf->SetTextColor(0,0,0);
+    $pdf->SetFont('Arial','B',8);
+
+    $pdf->setFillColor(230,230,230);
+    // $pdf->Ln(6);
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Cell(180,6,"CURRICULUM VITAE",0,0,'C');
+    $pdf->Ln(7);
+    $pdf->Ln();
+    $pdf->SetFont('Arial','B',15);
+    $pdf->Cell(180,6,$r[name],0,0,'L');
+    $pdf->Ln();
+    $pdf->Ln();
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Cell(40,6,"NAMA LENGKAP",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$r[name],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"NIK",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$r[reg_no],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"JENIS KELAMIN",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$r[gender],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"TEMPAT, TGL LAHIR",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$arrMaster[$r[birth_place]]." ".getTanggal($r[birth_date],"t"),0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"AGAMA",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$arrMaster[$r[religion]],0,0,'L');
+    $pdf->Ln(4);
+    $pdf->Cell(40,11,"ALAMAT",0,0,'L');
+    $pdf->Cell(5,11,":",0,0,'C');
+    $pdf->MultiCell(60, 4, $r[ktp_address], 0, 'L');
+    $pdf->Ln(1);
+    $pdf->Cell(40,6,"TGL BEKERJA",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,getTanggal($r[join_date],"t"),0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"AGAMA",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$arrMaster[$r[religion]],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"NPP",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$r[kode],0,0,'L');
+    $pdf->Ln(20);
+
+    //PENDIDIKAN
+
+    $eduexist = getField("select count(id) from emp_edu where parent_id = '$par[id]'");
+
+    $pdf->SetWidths(array(180));
+    $pdf->SetAligns(array('L'));
+    $pdf->SetFont('Arial','',10);
+    $pdf->Row(array("PENDIDIKAN FORMAL\tb"));
+
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->SetWidths(array(30,40,50,60));
+    $pdf->SetAligns(array('L','L','L','L'));
+
+    $pdf->Row(array("TAHUN\tb","TINGKATAN\tb","JURUSAN\tb","INSTITUSI\tb"));
+    if($eduexist!=0){
+        $pdf->SetWidths(array(30,40,50,60));
+        $pdf->SetAligns(array('L','L','L','L'));
+        $pdf->SetFont('Arial','',8);
+
+        $sql = "select * from emp_edu where parent_id='$par[id]' order by edu_year desc";
+        $res=db($sql);
+        $no=0;
+        while ($r=mysql_fetch_array($res)) {
+            $no++;
+            $no = $no.".";
+            $pdf->Row(array($r[edu_year]." - ".$r[edu_graduate]."\tu", $arrMaster[$r[edu_type]]."\tu",$arrMaster[$r[edu_dept]]."\tu", $r[edu_name]."\tu"));
+        }
+    }else{
+        $pdf->SetWidths(array(180));
+        $pdf->SetAligns(array('C'));
+        $pdf->Row(array("-- data kosong --"));
+    }
+
+    // }
+
+    $pdf->Ln();
+
+    //PELATIHAN
+
+    $trainingexist = getField("select count(id) from emp_training where parent_id = '$par[id]'");
+
+    $pdf->SetWidths(array(180));
+    $pdf->SetAligns(array('L'));
+    $pdf->SetFont('Arial','',10);
+    $pdf->Row(array("PELATIHAN\tb"));
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->SetWidths(array(40,60,30,50));
+    $pdf->SetAligns(array('L','L','L','L'));
+
+    $pdf->Row(array("TANGGAL\tb","PELATIHAN\tb","TEMPAT\tb","PENYELENGGARA\tb"));
+    if($trainingexist != 0) {
+        $pdf->SetWidths(array(40, 60, 30, 50));
+        $pdf->SetAligns(array('L', 'L', 'L', 'L'));
+        $pdf->SetFont('Arial', '', 8);
+
+        $sql = "select * from emp_training where parent_id='$par[id]' order by trn_date_start desc";
+        $res = db($sql);
+        $no = 0;
+        while ($r = mysql_fetch_array($res)) {
+            $no++;
+            $no = $no . ".";
+            list($tanggalAwal, $bulanAwal, $tahunAwal) = explode(" ", getTanggal($r[trn_date_start], "t"));
+            list($tanggalAkhir, $bulanAkhir, $tahunAkhir) = explode(" ", getTanggal($r[trn_date_end], "t"));
+            $r[trn_date_end] = !empty($r[trn_date_end]) ? implode(" ", array($tanggalAkhir, substr($bulanAkhir, 0, 3), $tahunAkhir)) : "current";
+            $r[tglEfektif] = implode(" ", array($tanggalAwal, substr($bulanAwal, 0, 3), $tahunAwal)) . " - " . $r[trn_date_end];
+            $pdf->Row(array($r[tglEfektif] . "\tu", $r[trn_subject] . "\tu", $r[trn_loc] . "\tu", $r[trn_agency] . "\tu",));
+        }
+    }else{
+        $pdf->SetWidths(array(180));
+        $pdf->SetAligns(array('C'));
+        $pdf->Row(array("-- data kosong --"));
+    }
+
+    $pdf->Ln();
+
+//KESEHATAN
+
+    $workexist = getField("select count(id) from emp_phist where parent_id = '$par[id]'");
+
+    $pdf->SetWidths(array(180));
+    $pdf->SetAligns(array('L'));
+    $pdf->SetFont('Arial','',10);
+    $pdf->Row(array("RIWAYAT KERJA\tb"));
+    // $pdf->Ln(15);
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->SetWidths(array(30,30,50,30,40));
+    $pdf->SetAligns(array('L','L','L','L','L'));
+
+    $pdf->Row(array("TANGGAL\tb","JOB GRADE\tb","JABATAN\tb","UNIT\tb","KETERANGAN\tb"));
+    if($workexist!=0){
+        $pdf->SetWidths(array(30,30,50,30,40));
+        $pdf->SetAligns(array('L','L','L','L','L'));
+        $pdf->SetFont('Arial','',8);
+
+        $sql = "select * from emp_phist where parent_id='$par[id]' order by start_date desc";
+        $res=db($sql);
+        $no=0;
+        while ($r=mysql_fetch_array($res)) {
+            $no++;
+            $no = $no.".";
+            $pdf->Row(array(getTanggal($r[sk_date], "t")."\tu",$arrMaster[$r[rank]]." ".$arrMaster[$r[grade]]."\tu",$r[pos_name]."\tu",$arrMaster[$r[div_id]]."\tu",$r[remark]."\tu"));
+            // $total += $r[nilai];
+        }
+    }else{
+        $pdf->SetWidths(array(180));
+        $pdf->SetAligns(array('C'));
+        $pdf->Row(array("-- data kosong --"));
+    }
+
+    // }
+
+    $pdf->Ln();
+
+
+    $rewardexist = getField("select count(id) from emp_reward where parent_id = '$par[id]'");
+
+
+    $pdf->SetWidths(array(180));
+    $pdf->SetAligns(array('L'));
+    $pdf->SetFont('Arial','',10);
+    $pdf->Row(array("PENGHARGAAN PEGAWAI\tb"));
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->SetWidths(array(40,30,60,50));
+    $pdf->SetAligns(array('L','L','L'));
+
+    $pdf->Row(array("SK\tb","TGL SK\tb","PUTUSAN\tb","KETERANGAN\tb"));
+    if($rewardexist!=0){
+        $pdf->SetWidths(array(40,30,60,50));
+        $pdf->SetAligns(array('L','L','L','L'));
+        $pdf->SetFont('Arial','',8);
+
+        $sql = "select * from emp_reward where parent_id='$par[id]' order by rwd_date desc";
+        $res=db($sql);
+        $no=0;
+        while ($r=mysql_fetch_array($res)) {
+            $no++;
+            $no = $no.".";
+            $pdf->Row(array($r[rwd_no]."\tu",getTanggal($r[rwd_date], "t")."\tu",$r[rwd_subject]."\tu",$r[remark]."\tu"));
+            $total += $r[nilai];
+        }
+    }else{
+        $pdf->SetWidths(array(180));
+        $pdf->SetAligns(array('C'));
+        $pdf->Row(array("-- data kosong --"));
+    }
+
+    $pdf->Ln();
+
+    $punishexist = getField("select count(id) from emp_punish where parent_id = '$par[id]'");
+
+    $pdf->SetWidths(array(180));
+    $pdf->SetAligns(array('L'));
+    $pdf->SetFont('Arial','',10);
+    $pdf->Row(array("SANKSI PEGAWAI\tb"));
+    $pdf->SetFont('Arial','',8);
+
+    $pdf->SetWidths(array(40,30,60,50));
+    $pdf->SetAligns(array('L','L','L'));
+
+    $pdf->Row(array("SK\tb","TGL SK\tb","PUTUSAN\tb","KETERANGAN\tb"));
+    if($punishexist!=0){
+        $pdf->SetWidths(array(40,30,60,50));
+        $pdf->SetAligns(array('L','L','L','L'));
+        $pdf->SetFont('Arial','',8);
+
+        $sql = "select * from emp_punish where parent_id='$par[id]' order by pnh_date desc";
+        $res=db($sql);
+        $no=0;
+        while ($r=mysql_fetch_array($res)) {
+            $no++;
+            $no = $no.".";
+            $pdf->Row(array($r[pnh_no]."\tu",getTanggal($r[pnh_date_start],"t")."\tu",$r[pnh_subject]."\tu",$r[remark]."\tu"));
+            $total += $r[nilai];
+        }
+    }else{
+        $pdf->SetWidths(array(180));
+        $pdf->SetAligns(array('C'));
+        $pdf->Row(array("-- data kosong --"));
+    }
+
+    $pdf->Output();
+}
+
+function getContent($par){
+    global $db,$s,$_submit,$menuAccess;
+    switch($par[mode]){
+        case "no":
+            $text = gNomor();
+            break;
+        case "get":
+            $text = gPegawai();
+            break;
+        case "peg":
+            $text = pegawai();
+            break;
+        case "det":
+            $text = detail();
+            break;
+        case "print":
+            $text = pdf();
+            break;
+        case "app":
+            if(isset($menuAccess[$s]["edit"])) $text = empty($_submit) ? form() : approve(); else $text = lihat();
+            break;
+        case "del":
+            if(isset($menuAccess[$s]["delete"])) $text = hapus(); else $text = lihat();
+            break;
+        case "edit":
+            if(isset($menuAccess[$s]["edit"])) $text = empty($_submit) ? form() : ubah(); else $text = lihat();
+            break;
+        case "add":
+            if(isset($menuAccess[$s]["add"])) $text = empty($_submit) ? form() : tambah(); else $text = lihat();
+            break;
+        default:
+            $text = lihat();
+            break;
+    }
+    return $text;
+}
+?>

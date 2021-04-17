@@ -1,0 +1,106 @@
+function getNomor(getPar){
+	tanggalLembur=document.getElementById("tanggalLembur");
+	var xmlHttp = getXMLHttp();
+	xmlHttp.onreadystatechange = function(){	
+		if(xmlHttp.readyState == 4 && xmlHttp.status==200){			
+			if(xmlHttp.responseText){
+				document.getElementById("inp[nomorLembur]").value = xmlHttp.responseText;
+			}
+		}
+	}
+	xmlHttp.open("GET", "ajax.php?par[mode]=no&tanggalLembur=" + tanggalLembur.value + getPar, true);
+	xmlHttp.send(null);
+	return false;
+}
+
+function setPegawai(nikPegawai, getPar){	
+	parent.document.getElementById("inp[nikPegawai]").value = nikPegawai;	
+	parent.getPegawai(getPar);
+	closeBox();
+}
+
+function getPegawai(getPar){
+	nikPegawai = document.getElementById("inp[nikPegawai]").value;
+	
+	var xmlHttp = getXMLHttp();
+	xmlHttp.onreadystatechange = function(){	
+		if(xmlHttp.readyState == 4 && xmlHttp.status==200){			
+			response = xmlHttp.responseText.trim();			
+			if(response){				
+				var data = JSON.parse(response);
+				document.getElementById("inp[idPegawai]").value = data["idPegawai"] == undefined ? "" : data["idPegawai"];
+				document.getElementById("inp[nikPegawai]").value = data["nikPegawai"] == undefined ? "" : data["nikPegawai"];
+				document.getElementById("inp[namaPegawai]").value = data["namaPegawai"] == undefined ? "" : data["namaPegawai"];
+				document.getElementById("inp[namaJabatan]").value = data["namaJabatan"] == undefined ? "" : data["namaJabatan"];
+				document.getElementById("inp[namaDivisi]").value = data["namaDivisi"] == undefined ? "" : data["namaDivisi"];
+				if(data["idPegawai"] == null && nikPegawai.length > 0)
+				alert("maaf, nik : \""+ nikPegawai + "\" belum terdaftar");
+			}
+		}
+	}
+	
+	xmlHttp.open("GET", "ajax.php?par[mode]=get&par[nikPegawai]=" + nikPegawai + getPar, true);
+	xmlHttp.send(null);
+	return false;
+}
+
+function getAtasan(getPar){
+	nikAtasan = document.getElementById("inp[nikAtasan]").value;
+	
+	var xmlHttp = getXMLHttp();
+	xmlHttp.onreadystatechange = function(){	
+		if(xmlHttp.readyState == 4 && xmlHttp.status==200){			
+			response = xmlHttp.responseText.trim();
+			if(response){
+				var data = JSON.parse(response);
+				document.getElementById("inp[idAtasan]").value = data["idPegawai"] == undefined ? "" : data["idPegawai"];
+				document.getElementById("inp[nikAtasan]").value = data["nikPegawai"] == undefined ? "" : data["nikPegawai"];
+				document.getElementById("inp[namaAtasan]").value = data["namaPegawai"] == undefined ? "" : data["namaPegawai"];
+				if(data["idPegawai"] == null && nikAtasan.length > 0)
+				alert("maaf, nik : \""+ nikAtasan + "\" belum terdaftar");
+			}
+		}
+	}
+	
+	xmlHttp.open("GET", "ajax.php?par[mode]=get&par[nikPegawai]=" + nikAtasan + getPar, true);
+	xmlHttp.send(null);
+	return false;
+}
+
+function cekTanggal(){
+
+	mulaiHadir=document.getElementById("mulaiLembur_tanggal");
+
+	
+	
+	var today = new Date();
+	//var val = 7;
+	var dd = today.getDate()*1;
+	var mm = today.getMonth()+1; //January is 0!
+	var yyyy = today.getFullYear();
+
+	if(dd<10) {
+	dd='0'+dd
+	} 
+
+
+
+	if(mm<10) {
+	mm='0'+mm
+	} 
+
+	today = yyyy+''+mm+''+dd;
+
+	tgl = mulaiHadir.value.split('/');
+
+	mulai = tgl[2]+tgl[1]+tgl[0];
+	// alert(mulai+" "+today);
+
+	if(mulai*1 < today*1){
+			// alert("today "+today+" mulaiHadir "+mulaiHadir.value);
+		 alert("Tanggal Izin harus lebih dari hari ini");
+		// mulaiHadir.value = "";
+	}
+	
+
+}

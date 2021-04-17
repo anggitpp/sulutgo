@@ -1,0 +1,298 @@
+<?php
+if (!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";
+
+$fFile = "files/upload/";
+
+function setTable()
+{
+	global $fFile, $cUsername, $arrParameter;
+	if (!in_array(strtolower(substr($_FILES[fileData][name], -3)), array("xls")) && !in_array(strtolower(substr($_FILES[fileData][name], -4)), array("xlsx"))) {
+		return "file harus dalam format .xls atau .xlsx";
+	} else {
+		$fileUpload = $_FILES[fileData][tmp_name];
+		$fileUpload_name = $_FILES[fileData][name];
+		if (($fileUpload != "") and ($fileUpload != "none")) {
+			fileUpload($fileUpload, $fileUpload_name, $fFile);
+			$fileData = md5($cUsername . "-" . date("Y-m-d H:i:s")) . "." . getExtension($fileUpload_name);
+			fileRename($fFile, $fileUpload_name, $fileData);
+
+			db("DROP TABLE IF EXISTS tmp_absen");
+			db("CREATE TABLE IF NOT EXISTS tmp_absen (
+				  idAbsen int(11) NOT NULL,
+				  nikPegawai varchar(30) NOT NULL,
+				  tanggalAbsen date NOT NULL,
+				  masukAbsen time NOT NULL,
+				  pulangAbsen time NOT NULL,
+				  keteranganAbsen varchar(150) NOT NULL,
+				  statusAbsen char(1) NOT NULL,
+				  createBy varchar(30) NOT NULL,
+				  createTime datetime NOT NULL,
+				  PRIMARY KEY (idAbsen)
+				) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+
+			$inputFileName = $fFile . $fileData;
+			require_once('plugins/PHPExcel/IOFactory.php');
+
+			try {
+				$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+				$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+				$objPHPExcel = $objReader->load($inputFileName);
+			} catch (Exception $e) {
+				die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
+			}
+
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow();
+
+			$status = getField("select kodeData from mst_data where statusData='t' and kodeCategory='" . $arrParameter[6] . "' order by urutanData limit 1");
+			for ($row = 1; $row <= $highestRow; $row++) {
+				$rowData = $sheet->rangeToArray('A' . $row . ':I' . $row, NULL, TRUE, TRUE);
+				$rowData[0][1] = setTanggal($rowData[0][1]);
+				$dta = $rowData[0];
+
+				$nikPegawai = trim(str_replace("-", "", $dta[1]));
+				$tanggalAbsen = trim($dta[2]);
+				$idPegawai = getField("select id from emp where trim(reg_no)='" . $nikPegawai . "' and status='" . $status . "'");
+
+				$sql = "delete from att_absen where idPegawai='" . $idPegawai . "' and tanggalAbsen='" . $tanggalAbsen . "'";
+				if ($idPegawai > 0) db($sql);
+			}
+
+			return "fileData" . $fileData;
+		}
+	}
+}
+
+function setData()
+{
+	global $par, $fFile, $cUsername, $arrParameter;
+
+	$inputFileName = $fFile . $par[fileData];
+	require_once('plugins/PHPExcel/IOFactory.php');
+
+	//  Read your Excel workbook
+	try {
+		$inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+		$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+		$objPHPExcel = $objReader->load($inputFileName);
+	} catch (Exception $e) {
+		die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME) . '": ' . $e->getMessage());
+	}
+
+	//  Get worksheet dimensions
+	$sheet = $objPHPExcel->getSheet(0);
+	$highestRow = $sheet->getHighestRow();
+
+	$result = $par[rowData] . ". ";
+	if ($par[rowData] <= $highestRow) {
+		$rowData = $sheet->rangeToArray('A' . $par[rowData] . ':I' . $par[rowData], NULL, TRUE, TRUE);
+		$dta = $rowData[0];
+
+		if (!in_array(trim(strtolower($dta[0])), array("", "nik"))) {
+			$status = getField("select kodeData from mst_data where statusData='t' and kodeCategory='" . $arrParameter[6] . "' order by urutanData limit 1");
+			$result .= $dta[2];
+			$nikPegawai = trim($dta[1]);
+			$tanggalAbsen = setTanggal(trim($dta[3]));
+			$idPegawai = getField("select id from emp where trim(reg_no)='" . $nikPegawai . "' and status='" . $status . "'");
+			$masukAbsen = trim($dta[7]);
+			$pulangAbsen = trim($dta[8]);
+
+			$statusAbsen = $idPegawai > 0 ? "t" : "f";
+			$keteranganAbsen = $idPegawai > 0 ? "OK" : "ID Absen : " . $kodeSetting . " belum terdaftar";
+
+			if ($idPegawai > 0 && (!empty($masukAbsen) || !empty($pulangAbsen))) {
+				$idAbsen = getField("select idAbsen from att_absen order by idAbsen desc limit 1") + 1;
+				$sql = "insert into att_absen (idAbsen, idPegawai, tanggalAbsen, tanggalAbsen_masuk, tanggalAbsen_pulang, masukAbsen, pulangAbsen, createBy, createTime) values ('" . $idAbsen . "', '" . $idPegawai . "', '" . $tanggalAbsen . "', '" . $tanggalAbsen . "', '" . $tanggalAbsen . "', '" . $masukAbsen . "', '" . $pulangAbsen . "', '" . $cUsername . "', '" . date('Y-m-d H:i:s') . "')";
+				db($sql);
+				$result .= $sql;
+
+				$sql = "update att_absen set durasiAbsen=CASE WHEN pulangAbsen >= masukAbsen THEN TIMEDIFF(pulangAbsen, masukAbsen) ELSE ADDTIME(TIMEDIFF('24:00:00', masukAbsen), TIMEDIFF(pulangAbsen, '00:00:00')) END where idAbsen='" . $idAbsen . "' and masukAbsen!='00:00:00' and pulangAbsen!='00:00:00'";
+				db($sql);
+			}
+
+			$idAbsen = getField("select idAbsen from tmp_absen order by idAbsen desc limit 1") + 1;
+			$sql = "insert into tmp_absen (idAbsen, nikPegawai, tanggalAbsen, masukAbsen, pulangAbsen, keteranganAbsen, statusAbsen, createBy, createTime) values ('" . $idAbsen . "', '" . $nikPegawai . "', '" . $tanggalAbsen . "', '" . $masukAbsen . "', '" . $pulangAbsen . "', '" . $keteranganAbsen . "', '" . $statusAbsen . "', '" . $cUsername . "', '" . date('Y-m-d H:i:s') . "')";
+			db($sql);
+
+			//sleep(1);
+		}
+
+		$progresData = getAngka($par[rowData] / $highestRow * 100, 0);
+		return $progresData . "\t(" . $progresData . "%) " . getAngka($par[rowData]) . " of " . getAngka($highestRow) . "\t" . $result;
+	}
+}
+
+function endProses()
+{
+	global $s;
+
+	$file = "files/Upload Absen.log";
+	if (file_exists($file)) unlink($file);
+	$fileName = fopen($file, "w");
+
+	$tanggalAbsen = date('Y-m-d');
+	$sql = "select * from tmp_absen where tanggalAbsen!='0000-00-00' order by idAbsen";
+	$res = db($sql);
+	$text = "NO. \tNPP\t\tTANGGAL\t\tMASUK\tKELUAR\tSTATUS\r\n";
+	$no = 1;
+	while ($r = mysql_fetch_array($res)) {
+		$text .= $no . ". \t" . $r[nikPegawai] . "\t\t" . getTanggal($r[tanggalAbsen]) . "\t" . substr($r[masukAbsen], 0, 5) . "\t" . substr($r[pulangAbsen], 0, 5) . "\t" . $r[keteranganAbsen] . "\r\n";
+		if ($r[statusAbsen] == "t") $tanggalAbsen = $r[tanggalAbsen];
+		$no++;
+	}
+
+	$tanggalAbsen = getField("select tanggalAbsen from att_absen where tanggalAbsen <= '" . $tanggalAbsen . "' order by tanggalAbsen desc limit 1");
+
+	fwrite($fileName, $text);
+	fclose($fileName);
+	sleep(1);
+
+	db("DROP TABLE IF EXISTS tmp_absen");
+	return getTanggal($tanggalAbsen) . "\tupload data selesai : " . getTanggal(date('Y-m-d'), "t") . ", " . date('H:i');
+}
+
+function formUpload()
+{
+	global $s, $par, $arrTitle;
+	?>
+	<div class="centercontent contentpopup">
+		<div class="pageheader">
+			<h1 class="pagetitle"><?= $arrTitle[$s] ?></h1>
+			<?= getBread(ucwords("upload data")) ?>
+		</div>
+		<div id="contentwrapper" class="contentwrapper">
+			<form class="stdform" enctype="multipart/form-data">
+				<div id="formInput" class="subcontent">
+					<p>
+						<label class="l-input-small">File</label>
+						<div class="field">
+							<input type="text" id="fileTemp" name="fileTemp" class="input" style="width:290px;" maxlength="100" />
+							<div class="fakeupload">
+								<input type="file" id="fileData" name="fileData" class="realupload" size="50" onchange="this.form.fileTemp.value=this.value;" />
+							</div>
+						</div>
+					</p>
+					<p>
+						<div style="float:right; margin-top:10px; margin-right:150px;"><a href="download.php?d=fmtAbsen" class="detil">* download template.xls</a></div>
+						<input type="button" class="btnSubmit radius2" name="btnSimpan" value="Upload" onclick="setProses('<?= getPar($par, 'mode') ?>');" />
+						<input type="button" class="cancel radius2" value="Batal" onclick="closeBox();" />
+					</p>
+				</div>
+				<div id="prosesImg" align="center" style="display:none; position:absolute; left:50%; top:50%;">
+					<img src="styles/images/loaders/loader6.gif"> </div>
+				<div id="progresBar" class="progress" style="display:none;">
+					<strong>Progress</strong> <span id="progresCnt">(0%) </span>
+					<div class="bar2" style="height:25px;">
+						<div id="persenBar" class="value orangebar" style="width: 0%; height:20px;"></div>
+					</div>
+				</div>
+				<span id="progresRes"></span>
+				<div id="progresEnd" class="progress" style="margin-top:30px; display:none;">
+					<input type="hidden" id="tanggalAbsen" name="tanggalAbsen" value="<?= date('d/m/Y') ?>"> <a href="download.php?d=logAbsen" class="btn btn1 btn_inboxi"><span>Download Result</span></a>
+					<input type="button" class="cancel radius2" style="float:right" value="Close" onclick="window.parent.location='index.php?par[tanggalAbsen]=' + document.getElementById('tanggalAbsen').value + '<?= getPar($par, 'mode,tanggalAbsen') ?>' ;" />
+				</div>
+			</form>
+		</div>
+	</div>
+<?php
+}
+
+function lihat()
+{
+	global $s, $par, $arrTitle, $arrParameter, $menuAccess, $areaCheck;
+
+	if (empty($par[tanggalAbsen])) $par[tanggalAbsen] = date('d/m/Y');
+
+	$queryLokasi = "SELECT kodeData id, namaData description from mst_data where statusData='t' and kodeCategory='" . $arrParameter[7] . "' and kodeData in ($areaCheck) order by urutanData";
+	$queryStatus = "SELECT kodeData id, namaData description from mst_data where statusData='t' and kodeCategory='" . $arrParameter[5] . "' order by urutanData";
+	?>
+	<div class="pageheader">
+		<h1 class="pagetitle"><?= $arrTitle[$s] ?></h1>
+		<?= getBread() ?>
+	</div>
+	<div id="contentwrapper" class="contentwrapper">
+		<form id="form" action="" method="post" class="stdform">
+			<p class="btnSave">
+				Lokasi Kerja :
+				<?= comboData($queryLokasi, "id", "description", "par[idLokasi]", "All", $par[idLokasi], "onchange=\"document.getElementById('form').submit();\"", "310px") ?>
+				<?= comboData($queryStatus, "id", "description", "par[idStatus]", "All", $par[idStatus], "onchange=\"document.getElementById('form').submit();\"", "110px") ?>
+				<input type="button" value="&lsaquo;" class="btn btn_search btn-small" style="margin-right:5px;" onclick="prevDate();" />
+				<input type="text" id="tanggalAbsen" name="par[tanggalAbsen]" size="10" maxlength="10" value="<?= $par[tanggalAbsen] ?>" class="vsmallinput hasDatePicker" onchange="document.getElementById('form').submit();" />
+				<input type="button" value="&rsaquo;" class="btn btn_search btn-small" onclick="nextDate();" />
+			</p>
+			<br clear="all" />
+			<div id="pos_r">
+				<?php if (isset($menuAccess[$s]["add"])) ?> <a href="#Add" class="btn btn1 btn_inboxo" onclick="openBox('popup.php?par[mode]=upl<?= getPar($par, 'mode,idMesin') ?>',725,250);"><span>Upload Data</span></a>
+				<?php if (isset($menuAccess[$s]["delete"])) ?><a href="?par[mode]=all<?= getPar($par, 'mode') ?>" class="btn btn1 btn_trash" onclick="return confirm('anda yakin akan menghapus data absensi tanggal <?= getTanggal(setTanggal($par[tanggalAbsen]), "t") ?> ?');"><span>Delete Data</span></a>
+			</div>
+		</form>
+		<br clear="all" />
+		<table cellpadding="0" cellspacing="0" border="0" class="stdtable stdtablequick" id="dyntable">
+			<thead>
+				<tr>
+					<th rowspan="2" style="vertical-align:middle;" width="20">No.</th>
+					<th rowspan="2" style="vertical-align:middle;" width="*">Nama</th>
+					<th rowspan="2" style="vertical-align:middle;" width="100">NPP</th>
+					<th colspan="2" width="80">Jadwal</th>
+					<th colspan="2" width="80">Aktual</th>
+					<th rowspan="2" style="vertical-align:middle;" width="40">Durasi</th>
+					<th rowspan="2" style="vertical-align:middle;" width="100">Keterangan</th>
+				</tr>
+				<tr>
+					<th width="40">Masuk</th>
+					<th width="40">Pulang</th>
+					<th width="40">Masuk</th>
+					<th width="40">Pulang</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+					$sql = "SELECT t2.name, t2.reg_no FROM dta_absen t1 join emp t2 on t1.idPegawai = t2.id join emp_phist t3 on (t2.id = t3.parent_id AND t3.status = '1')";
+					$res = db($sql);
+					$no = 0;
+					while ($r = mysql_fetch_assoc($res)) {
+						$no++;
+						?>
+					<tr>
+						<td><?= $no ?>.</td>
+						<td><?= $r[name] ?></td>
+						<td><?= $r[reg_no] ?></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				<?php
+					}
+					?>
+			</tbody>
+		</table>
+	</div>
+<?php
+}
+
+function getContent($par)
+{
+	global $s, $_submit, $menuAccess;
+	switch ($par[mode]) {
+		case "upl":
+			$text = isset($menuAccess[$s]["add"]) ? formUpload() : lihat();
+			break;
+		case "end":
+			if (isset($menuAccess[$s]["add"])) $text = endProses();
+			break;
+		case "dat":
+			if (isset($menuAccess[$s]["add"])) $text = setData();
+			break;
+		case "tab":
+			if (isset($menuAccess[$s]["add"])) $text = setTable();
+			break;
+		default:
+			$text = lihat();
+			break;
+	}
+	return $text;
+}
+?>
