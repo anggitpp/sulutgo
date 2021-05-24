@@ -355,6 +355,7 @@ class Emp extends DAL {
     $sql = " SELECT 
 
     id,
+        kode,
     cat,
     name,
     alias,
@@ -414,7 +415,8 @@ class Emp extends DAL {
         $this->cat = $row["cat"];
         $this->name = $row["name"];
         $this->alias = $row["alias"];
-        $this->regNo = $row["reg_no"];
+          $this->regNo = $row["reg_no"];
+          $this->kode = $row["kode"];
         $this->birthPlace = $row["birth_place"];
         $this->birthDate = $row["birth_date"];
         $this->ktpNo = $row["ktp_no"];

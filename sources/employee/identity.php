@@ -59,7 +59,8 @@ $ui = new UIHelper();
                 </td>
                 <td style="width:350px;">
                   <?php
-                  echo $ui->createPLabelSpanDisplay("NPP", $emp->regNo);
+                  echo $ui->createPLabelSpanDisplay("ID", $emp->regNo);
+                  echo $ui->createPLabelSpanDisplay("NPP", $emp->kode);
                   echo $ui->createPLabelSpanDisplay("Tgl. Lahir", getTanggal($emp->birthDate));
                   echo $ui->createPLabelSpanDisplay("File KTP", "<a href=\"#\" onclick=\"openBox('view.php?doc=ktp&id=$emp->id',1000,500);\"><img src=\"" . getIcon($emp->ktpFilename) . "\" align=\"left\" style=\"vertical-align:middle\" ></a>", "", "fieldB");
                   ?>
@@ -80,10 +81,10 @@ $ui = new UIHelper();
 	  </tr>
 	  <tr>
 		<td>
-		  <?php echo $ui->createPLabelSpanDisplay("Propinsi", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpProv'", "description")); ?>
+		  <?php echo $ui->createPLabelSpanDisplay("Propinsi KTP", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpProv'", "description")); ?>
 		</td>
 		<td>
-		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpCity'", "description")); ?>
+		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota KTP", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->ktpCity'", "description")); ?>
 		</td>
 	  </tr>
 	  <tr>
@@ -94,10 +95,10 @@ $ui = new UIHelper();
 	  </tr>
 	  <tr>
 		<td>
-		  <?php echo $ui->createPLabelSpanDisplay("Propinsi", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domProv'", "description")); ?>
+		  <?php echo $ui->createPLabelSpanDisplay("Propinsi Domisili", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domProv'", "description")); ?>
 		</td>
 		<td>
-		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domCity'", "description")); ?>
+		  <?php echo $ui->createPLabelSpanDisplay("Kab/Kota Domisili", $cutil->getDescription("select namaData description from mst_data WHERE kodeData='$emp->domCity'", "description")); ?>
 		</td>
 	  </tr>              
 	  <tr>

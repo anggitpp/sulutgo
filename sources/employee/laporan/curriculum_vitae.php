@@ -159,9 +159,13 @@ function pdf(){
     $pdf->Cell(5,6,":",0,0,'C');
     $pdf->Cell(60,6,$r[name],0,0,'L');
     $pdf->Ln();
-    $pdf->Cell(40,6,"NIK",0,0,'L');
+    $pdf->Cell(40,6,"ID",0,0,'L');
     $pdf->Cell(5,6,":",0,0,'C');
     $pdf->Cell(60,6,$r[reg_no],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"NPP",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,$r[kode],0,0,'L');
     $pdf->Ln();
     $pdf->Cell(40,6,"JENIS KELAMIN",0,0,'L');
     $pdf->Cell(5,6,":",0,0,'C');
@@ -174,6 +178,10 @@ function pdf(){
     $pdf->Cell(40,6,"AGAMA",0,0,'L');
     $pdf->Cell(5,6,":",0,0,'C');
     $pdf->Cell(60,6,$arrMaster[$r[religion]],0,0,'L');
+    $pdf->Ln();
+    $pdf->Cell(40,6,"TGL BEKERJA",0,0,'L');
+    $pdf->Cell(5,6,":",0,0,'C');
+    $pdf->Cell(60,6,getTanggal($r[join_date],"t"),0,0,'L');
     if(empty($r[ktp_address])){
         $pdf->Ln();
         $pdf->Cell(40,6,"ALAMAT",0,0,'L');
@@ -181,24 +189,13 @@ function pdf(){
         $pdf->Cell(60,6,$r[ktp_address],0,0,'L');
         $pdf->Ln();
     }else {
-        $pdf->Ln(4);
+        $pdf->Ln(8);
         $pdf->Cell(40, 11, "ALAMAT", 0, 0, 'L');
         $pdf->Cell(5, 11, ":", 0, 0, 'C');
         $pdf->MultiCell(60, 4, $r[ktp_address], 0, 'L');
         $pdf->Ln(1);
     }
-    $pdf->Cell(40,6,"TGL BEKERJA",0,0,'L');
-    $pdf->Cell(5,6,":",0,0,'C');
-    $pdf->Cell(60,6,getTanggal($r[join_date],"t"),0,0,'L');
-    $pdf->Ln();
-    $pdf->Cell(40,6,"AGAMA",0,0,'L');
-    $pdf->Cell(5,6,":",0,0,'C');
-    $pdf->Cell(60,6,$arrMaster[$r[religion]],0,0,'L');
-    $pdf->Ln();
-    $pdf->Cell(40,6,"NPP",0,0,'L');
-    $pdf->Cell(5,6,":",0,0,'C');
-    $pdf->Cell(60,6,$r[kode],0,0,'L');
-    $pdf->Ln(20);
+    $pdf->Ln(10);
 
     //PENDIDIKAN
 

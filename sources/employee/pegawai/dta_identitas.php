@@ -40,7 +40,8 @@ function lihat()
                         <p><?= $ui->createSpan("Alamat KTP", $r[ktp_address]) ?></p>
                     </td>
                     <td style="width:40%;vertical-align: top;">
-                        <p><?= $ui->createSpan("NPP", $r[reg_no]) ?></p>
+                        <p><?= $ui->createSpan("ID", $r[reg_no]) ?></p>
+                        <p><?= $ui->createSpan("NPP", $r[kode]) ?></p>
                         <p><?= $ui->createSpan("Tgl. Lahir", getTanggal($r[birth_date], "t")) ?></p>
                         <p><?= $ui->createSpan("File KTP", "<a href=\"download.php?d=empktp&f=$r[id]" . getPar($par, "mode") . "\"><img src=\"" . getIcon($r[ktp_filename]) . "\" style=\"height:20px;\"></a>") ?></p>
                     </td>
@@ -49,9 +50,9 @@ function lihat()
             <table style="width:100%">
                 <tr>
                     <td style="width:50%">
-                        <p><?= $ui->createSpan("Propinsi", $arrMaster[$r[ktp_prov]]) ?></p>
+                        <p><?= $ui->createSpan("Propinsi KTP", $arrMaster[$r[ktp_prov]]) ?></p>
                         <p><?= $ui->createSpan("Alamat Domisili", $r[dom_address]) ?></p>
-                        <p><?= $ui->createSpan("Propinsi", $arrMaster[$r[dom_prov]]) ?></p>
+                        <p><?= $ui->createSpan("Propinsi Domisili", $arrMaster[$r[dom_prov]]) ?></p>
                         <p><?= $ui->createSpan("Telp. Rumah", $r[phone_no]) ?></p>
                         <p><?= $ui->createSpan("Email", $r[email]) ?></p>
                         <p><?= $ui->createSpan("Status Pegawai", $arrMaster[$r[cat]]) ?></p>
@@ -59,11 +60,10 @@ function lihat()
                         <p><?= $ui->createSpan("Masuk Kerja", getTanggal($r[join_date])) ?></p>
                     </td>
                     <td style="width:50">
-                        <p><?= $ui->createSpan("Kab/Kota", $arrMaster[$r[ktp_city]]) ?></p>
+                        <p><?= $ui->createSpan("Kab/Kota KTP", $arrMaster[$r[ktp_city]]) ?></p>
                         <p>&nbsp;</p>
-                        <p><?= $ui->createSpan("Kab/Kota", $arrMaster[$r[dom_city]]) ?></p>
+                        <p><?= $ui->createSpan("Kab/Kota Domisili", $arrMaster[$r[dom_city]]) ?></p>
                         <p><?= $ui->createSpan("No. HP", $r[cell_no]) ?></p>
-                        </p>
                     </td>
                 </tr>
             </table>
