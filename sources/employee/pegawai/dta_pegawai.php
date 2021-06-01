@@ -715,7 +715,7 @@ function form()
 
 function lihat()
 {
-    global $s, $par, $arrTitle, $menuAccess, $ui, $arrParameter, $arrParam;
+    global $s, $par, $arrTitle, $menuAccess, $ui, $arrParameter, $arrParam, $areaCheck;
 
     $queryLokasi = "SELECT kodeData id, namaData description FROM mst_data WHERE statusData='t' AND kodeCategory = 'S06' ORDER BY urutanData";
     $queryPangkat = "SELECT kodeData id, namaData description FROM mst_data WHERE statusData='t' AND kodeCategory = 'S09' ORDER BY urutanData";
@@ -813,7 +813,7 @@ function lihat()
                             $filterPensiun = "AND $par[tahunData] - year(birth_date) = '37'";
                         }
                     }
-                    $filter = "WHERE t1.status = '535' $filterCat $filterPensiun";
+                    $filter = "WHERE t1.status = '535' $filterCat $filterPensiun AND location IN($areaCheck)";
                     if (!empty($par[filterData]))
                         $filter .= " and (lower(name) LIKE '%$par[filterData]%' OR lower(reg_no) LIKE '%$par[filterData]%' OR lower(pos_name) LIKE '%$par[filterData]%')";
                     if (!empty($par[idLokasi]))
