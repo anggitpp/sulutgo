@@ -1155,7 +1155,7 @@ function xls()
         }
     }
 
-    $filter = "WHERE t1.status = '535' $filterCat $filterPensiun";
+    $filter = "WHERE t1.status = '535' $filterCat $filterPensiun AND location IN($areaCheck)";
     if (!empty($par[filterData]))
         $filter .= " and (lower(name) LIKE '%$par[filterData]%' OR lower(reg_no) LIKE '%$par[filterData]%' OR lower(pos_name) LIKE '%$par[filterData]%')";
     if (!empty($par[idLokasi]))

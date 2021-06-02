@@ -487,8 +487,8 @@ function lihat()
             </thead>
             <tbody>
                 <?php
-                    $filter = "WHERE t1.status !='535'";
-                    if(!empty($arrParam[$s]))
+                $filter = "WHERE t1.status !='535' AND location IN($areaCheck)";
+                if(!empty($arrParam[$s]))
                         $filter.=" and t1.status = '".$arrKode[$arrParam[$s]]."'";
                     if (!empty($par[idLokasi]))
                         $filter .= " and t2.location = '$par[idLokasi]'";
@@ -577,7 +577,7 @@ function xls()
 
     $field = array("no",  "nama", "nik", "jabatan", "rank","unit kerja", "tanggal lahir", "tanggal masuk", "masa kerja");
 
-    $filter = "WHERE t1.status = '" . $arrKode[$arrUrutan[$s] + 1] . "'";
+    $filter = "WHERE t1.status = '" . $arrKode[$arrUrutan[$s] + 1] . "' AND location IN($areaCheck)";
     $sql = "SELECT t1.id, t1.name, t1.reg_no, t1.birth_date, t1.join_date, t2.pos_name, t2.rank, t2.div_id,replace(
         case when coalesce(leave_date,NULL) IS NULL THEN
         CONCAT(TIMESTAMPDIFF(YEAR,  t1.join_date, CURRENT_DATE ),' thn ', TIMESTAMPDIFF(MONTH, t1.join_date,  CURRENT_DATE ) % 12, ' bln')

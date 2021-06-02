@@ -362,7 +362,7 @@ function lihat()
             </thead>
             <tbody>
                 <?php
-                    $filter = "WHERE t1.id is not null";
+                    $filter = "WHERE t2.location IN ($areaCheck)";
                     if (!empty($par[filterData]))
                         $filter .= " and (lower(t1.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t1.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
                     if (!empty($par[idLokasi]))
