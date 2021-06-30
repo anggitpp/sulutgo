@@ -80,10 +80,10 @@ function setData()
             $job_group_date = implode('-', array_reverse(explode('/', $dta[15])));
             $div_id_date = implode('-', array_reverse(explode('/', $dta[16])));
 
-            $dir_id = getField("SELECT kodeData from mst_data where kodeCategory='X03' AND lower(trim(namaData)) = '".trim(strtolower($dta[17]))."'");
-            $div_id = getField("SELECT t1.kodeData from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk where t2.kodeCategory='X03' and t1.kodeInduk = '$dir_id' AND lower(trim(t1.namaData)) = '".trim(strtolower($dta[18]))."'");
-            $dept_id = getField("SELECT t1.kodeData id, t1.namaData description, t1.kodeInduk from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk JOIN mst_data t3 ON t3.kodeData = t2.kodeInduk where t3.kodeCategory='X03' and t1.kodeInduk = '$div_id' AND lower(trim(t1.namaData)) = '".trim(strtolower($dta[19]))."' ");
-            $unit_id = getField("SELECT t1.kodeData id, t1.namaData description, t1.kodeInduk from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk JOIN mst_data t3 ON t3.kodeData = t2.kodeInduk JOIN mst_data t4 ON t4.kodeData=t3.kodeInduk where t4.kodeCategory='X03' and t1.kodeInduk = '$dept_id' AND lower(trim(t1.namaData)) = '".trim(strtolower($dta[20]))."'");
+            $dir_id = getField("SELECT kodeData from mst_data where kodeCategory='X03' AND lower(trim(namaData)) = '" . trim(strtolower($dta[17])) . "'");
+            $div_id = getField("SELECT t1.kodeData from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk where t2.kodeCategory='X03' and t1.kodeInduk = '$dir_id' AND lower(trim(t1.namaData)) = '" . trim(strtolower($dta[18])) . "'");
+            $dept_id = getField("SELECT t1.kodeData id, t1.namaData description, t1.kodeInduk from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk JOIN mst_data t3 ON t3.kodeData = t2.kodeInduk where t3.kodeCategory='X03' and t1.kodeInduk = '$div_id' AND lower(trim(t1.namaData)) = '" . trim(strtolower($dta[19])) . "' ");
+            $unit_id = getField("SELECT t1.kodeData id, t1.namaData description, t1.kodeInduk from mst_data t1 JOIN mst_data t2 ON t2.kodeData=t1.kodeInduk JOIN mst_data t3 ON t3.kodeData = t2.kodeInduk JOIN mst_data t4 ON t4.kodeData=t3.kodeInduk where t4.kodeCategory='X03' and t1.kodeInduk = '$dept_id' AND lower(trim(t1.namaData)) = '" . trim(strtolower($dta[20])) . "'");
             $prov_id = $arrMaster[trim(strtolower($dta[21]))];
             $city_id = $arrMaster[trim(strtolower($dta[22]))];
             $leader_id = $arrPegawai[trim(strtolower($dta[23]))];
@@ -94,38 +94,45 @@ function setData()
             $shift_id = $arrShift[trim(strtolower($dta[28]))];
             $status = trim(strtolower($dta[29]));
             $remark = $dta[30];
+            $statusAktif = $status == "ya" ? 1 : 0;
 
-            if ($status == "ya") {
-                db("UPDATE emp_phist set status = '0' WHERE parent_id = '$parentId'");
-                $id = getLastId("emp_phist", "id");
-                $sql = "INSERT into emp_phist set id = '$id', parent_id = '$parentId', pos_name = '$pos_name', rank = '$rank', grade = '$grade', 
-                sk_no = '$sk_no', sk_date = '$sk_date', start_date = '$start_date', end_date = '$end_date', location = '$location', dir_id = '$dir_id', 
-                div_id = '$div_id', dept_id = '$dept_id', unit_id = '$unit_id', prov_id = '$prov_id', city_id = '$city_id', leader_id = '$leader_id', 
-                administration_id = '$administration_id', payroll_id = '$payroll_id', group_id = '$group_id', proses_id = '$proses_id', shift_id = '$shift_id', 
-                pos_name_date = '$pos_name_date', rank_date = '$rank_date', grade_date = '$grade_date', job_group_date = '$job_group_date', div_id_date = '$div_id_date',
-                remark = '$remark', status = '1', create_by = 'migrasi', create_date = '" . date('Y-m-d H:i:s') . "'";
-                $result.= $sql;
-                db($sql);
+            if (!empty($start_date)) {
+                $exist = getField("SELECT id FROM emp_phist WHERE parent_id = '$parentId' AND start_date = '$start_date' AND grade = '$grade'");
 
-                fwrite($fileName, "OK : " . $dta[3] . "\t" . $dta[2] . "\t" . $dta[5] . "\r\n");
-            } else {
-                $id = getField("SELECT id FROM emp_phist WHERE parent_id = '$parentId' AND status = '1'");
-                $sql = "UPDATE emp_phist set id = '$id', parent_id = '$parentId', pos_name = '$pos_name', rank = '$rank', grade = '$grade', sk_no = '$sk_no', 
-                sk_date = '$sk_date', start_date = '$start_date', end_date = '$end_date', location = '$location', dir_id = '$dir_id', div_id = '$div_id', 
-                dept_id = '$dept_id', unit_id = '$unit_id', prov_id = '$prov_id', city_id = '$city_id', leader_id = '$leader_id', administration_id = '$administration_id', 
-                payroll_id = '$payroll_id', group_id = '$group_id', proses_id = '$proses_id', shift_id = '$shift_id', 
-                pos_name_date = '$pos_name_date', rank_date = '$rank_date', grade_date = '$grade_date', job_group_date = '$job_group_date', 
-                div_id_date = '$div_id_date',  remark = '$remark', update_by = 'migrasi', update_date = '" . date('Y-m-d H:i:s') . "' where id = '$id' ";
-                $result.= $sql;
-                db($sql);
+                if ($status == "ya") {
+                    db("UPDATE emp_phist set status = '0' WHERE parent_id = '$parentId'");
+                }
 
-                fwrite($fileName, "OK : " . $dta[3] . "\t" . $dta[2] . "\t" . $dta[5] . "\r\n");
+                if (!$exist) {
+                    $id = getLastId("emp_phist", "id");
+                    $sql = "INSERT into emp_phist set id = '$id', parent_id = '$parentId', pos_name = '$pos_name', rank = '$rank', grade = '$grade', 
+                    sk_no = '$sk_no', sk_date = '$sk_date', start_date = '$start_date', end_date = '$end_date', location = '$location', dir_id = '$dir_id', 
+                    div_id = '$div_id', dept_id = '$dept_id', unit_id = '$unit_id', prov_id = '$prov_id', city_id = '$city_id', leader_id = '$leader_id', 
+                    administration_id = '$administration_id', payroll_id = '$payroll_id', group_id = '$group_id', proses_id = '$proses_id', shift_id = '$shift_id', 
+                    pos_name_date = '$pos_name_date', rank_date = '$rank_date', grade_date = '$grade_date', job_group_date = '$job_group_date', div_id_date = '$div_id_date',
+                    remark = '$remark', status = '$statusAktif', create_by = 'migrasi', create_date = '" . date('Y-m-d H:i:s') . "'";
+                    $result .= $sql;
+                    db($sql);
+
+                    fwrite($fileName, "OK : " . $dta[3] . "\t" . $dta[2] . "\t" . $dta[5] . "\r\n");
+                } else {
+                    $sql = "UPDATE emp_phist SET parent_id = '$parentId', pos_name = '$pos_name', rank = '$rank', grade = '$grade', sk_no = '$sk_no', 
+                    sk_date = '$sk_date', start_date = '$start_date', end_date = '$end_date', location = '$location', dir_id = '$dir_id', div_id = '$div_id', 
+                    dept_id = '$dept_id', unit_id = '$unit_id', prov_id = '$prov_id', city_id = '$city_id', leader_id = '$leader_id', administration_id = '$administration_id', 
+                    payroll_id = '$payroll_id', group_id = '$group_id', proses_id = '$proses_id', shift_id = '$shift_id', 
+                    pos_name_date = '$pos_name_date', rank_date = '$rank_date', grade_date = '$grade_date', job_group_date = '$job_group_date', 
+                    div_id_date = '$div_id_date', status = '$statusAktif',  remark = '$remark', update_by = 'migrasi', update_date = '" . date('Y-m-d H:i:s') . "' where id = '$exist' ";
+                    $result .= $sql;
+                    db($sql);
+
+                    fwrite($fileName, "OK : " . $dta[3] . "\t" . $dta[2] . "\t" . $dta[5] . "\r\n");
+                }
+
+                fclose($fileName);
+                sleep(1);
+
+                $tRow++;
             }
-
-            fclose($fileName);
-            sleep(1);
-
-            $tRow++;
         }
 
         $rowData = $par[rowData] - 5;

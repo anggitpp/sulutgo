@@ -3,7 +3,7 @@ if (!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";
 
 $fFile = "files/emp/edu/";
 $fExport = "files/export/";
-$fLog = "files/log/logPendidikan.log";
+$fLog = "files/logPendidikan.log";
 
 function setFile()
 {

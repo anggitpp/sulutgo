@@ -71,20 +71,21 @@ function setData()
             $trn_date_end = implode('-', array_reverse(explode('/', $dta[11])));
             $trn_loc = $dta[12];
 
-            $exist = getField("SELECT id FROM emp_training WHERE parent_id = '$parentId' AND trn_date_start = '$trn_date_start'");
+            $exist = getField("SELECT id FROM emp_training WHERE parent_id = '$parentId' AND trn_date_start = '$trn_date_start' AND trn_subject = '$trn_subject'");
             if(!$exist) {
                 $sql = "insert into emp_training set id = '$id', parent_id = '$parentId', trn_no = '$trn_no', trn_subject = '$trn_subject', 
                 trn_agency = '$trn_agency', trn_year = '$trn_year', trn_cat = '$trn_cat', trn_type = '$trn_type', trn_date_start = '$trn_date_start', 
                 trn_date_end = '$trn_date_end', trn_loc = '$trn_loc', create_by = 'migrasi', create_date = '" . date('Y-m-d H:i:s') . "'";
                 db($sql);
+                fwrite($fileName, "OK : INSERT NPP " . $dta[1] . " \t " . $dta[3] . "\t" . $dta[2] . "\r\n");
             }else{
                 $sql = "UPDATE emp_training SET trn_no = '$trn_no', trn_subject = '$trn_subject', trn_agency = '$trn_agency', trn_year = '$trn_year', 
                 trn_cat = '$trn_cat', trn_type = '$trn_type', trn_date_start = '$trn_date_start', trn_date_end = '$trn_date_end', trn_loc = '$trn_loc', 
                 update_by = 'migrasi', update_date = '" . date('Y-m-d H:i:s') . "' WHERE id = '$exist'";
                 db($sql);
+                fwrite($fileName, "OK : UPDATE NPP " . $dta[1] . " \t " . $dta[3] . "\t" . $dta[2] ."\r\n");
             }
 
-            fwrite($fileName, "OK : NPP " . $dta[1] . " \t " . $dta[3] . "\t" . $dta[2] . "\r\n");
 
             fclose($fileName);
             sleep(1);
