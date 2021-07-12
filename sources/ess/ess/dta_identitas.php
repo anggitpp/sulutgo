@@ -37,7 +37,8 @@ function lihat()
                         <p><?= $ui->createSpan("Alamat KTP", $r[ktp_address]) ?></p>
                     </td>
                     <td style="width:40%;vertical-align: top;">
-                        <p><?= $ui->createSpan("NPP", $r[reg_no]) ?></p>
+                        <p><?= $ui->createSpan("ID", $r[reg_no]) ?></p>
+                        <p><?= $ui->createSpan("NPP", $r[kode]) ?></p>
                         <p><?= $ui->createSpan("Tgl. Lahir", getTanggal($r[birth_date], "t")) ?></p>
                         <p><?= $ui->createSpan("File KTP", "<a href=\"download.php?d=empktp&f=$r[id]" . getPar($par, "mode") . "\"><img src=\"" . getIcon($r[ktp_filename]) . "\" style=\"height:20px;\"></a>") ?></p>
                     </td>
