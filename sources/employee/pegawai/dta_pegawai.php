@@ -1,5 +1,7 @@
 <?php
 
+ini_set('precision', '30');
+
 if (!isset($menuAccess[$s]["view"])) echo "<script>logout();</script>";
 
 $fKTP = "files/emp/ktp/";
@@ -63,11 +65,11 @@ function setData()
         if ($par[rowData] <= $highestRow) {
             $rowData = $sheet->rangeToArray('A' . $par[rowData] . ':AW' . $par[rowData], NULL, TRUE, TRUE);
             $dta = $rowData[0];
-            $tRow = 6;
+            $tRow = $par[rowData];
 
             if (!in_array(trim(strtolower($dta[1])), array("", "NAMA"))) {
                 $name = mysql_real_escape_string($dta[1]);
-                $reg_no = $dta[2];
+                $reg_no = $objPHPExcel->getActiveSheet()->getCell('C'.$tRow)->getValue();
                 $birth_date = implode('-', array_reverse(explode('/', $dta[3])));
                 $gender = $dta[5] == "P" ? "F" : "M";
                 $marital = substr($dta[6],0,1) == "K" ? 4474 : 4475;
@@ -112,6 +114,7 @@ function setData()
                 if (!empty($cekPegawai)) {
                     $sql = "update emp set reg_no = '$reg_no', kode = '$kode', name = '$name', birth_date = '$birth_date', gender = '$gender', marital = '$marital', ptkp = '$ptkp', id_pendidikan = '$id_pendidikan', religion = '$religion', ktp_prov = '$ktp_prov', ktp_city = '$ktp_city', bpjs_no_ks = '$bpjs_no_ks', bpjs_no = '$bpjs_no', cat = '$cat', cat_date = '$cat_date', join_date = '$join_date', tmt_masa_kerja = '$tmt_masa_kerja', tmt_berhenti = '$tmt_berhenti', status = '$status', update_by = 'migrasi', update_date = '" . date('Y-m-d H:i:s') . "' where id = '$cekPegawai'";
                     db($sql);
+//                    echo $sql;
 //                    $result.=$sql;
 
                     $sql = "update emp_phist set leader_id = '$leader_id', administration_id = '$administration_id', payroll_id = '$payroll_id', proses_id = '$proses_id', group_id = '$group_id', shift_id = '$shift_id', grade = '$grade', job_group = '$job_group', job_group_date = '$job_group_date', rank = '$rank', rank_date = '$rank_date', skala = '$skala', pos_name = '$pos_name', pos_name_date = '$pos_name_date', dir_id = '$dir_id', div_id = '$div_id', dept_id = '$dept_id', unit_id = '$unit_id', location = '$location', status = '1', update_by = 'migrasi', update_date = '" . date('Y-m-d H:i:s') . "' where parent_id = '$cekPegawai' and status = '1'";

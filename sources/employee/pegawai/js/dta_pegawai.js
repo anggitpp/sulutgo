@@ -10,7 +10,7 @@
 // }
 
 jQuery(document).ready(function () {
-  jQuery("#form").validate().settings.ignore = [];
+  // jQuery("#form").validate().settings.ignore = [];
   // jQuery("#inp\\[npwp_no\\]").mask("99.999.999.9-999.999");
   jQuery("#ktpFilename").on("change", function () {
     var files = !!this.files ? this.files : [];
@@ -121,7 +121,7 @@ function setData(fileData, getPar, rowData) {
   xmlHttp.onreadystatechange = function () {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
       response = xmlHttp.responseText.trim();
-      // alert(response);
+      //alert(response);
       if (response) {
         dta = response.split("\t");
         persenBar.style.width = dta[0] + "%";
