@@ -74,10 +74,11 @@ function setData()
     if ($par[rowData] <= $highestRow) {
         $rowData = $sheet->rangeToArray('A' . $par[rowData] . ':L' . $par[rowData], NULL, TRUE, TRUE);
         $dta = $rowData[0];
-        $tRow = 6;
+        $tRow = $par[rowData];
 
         if (!in_array(trim(strtolower($dta[0])), array("", "NO"))) {
-            $parentId = getField("select id from emp where reg_no = '" . $dta[1] . "'");
+            $reg_no = $objPHPExcel->getActiveSheet()->getCell('B'.$tRow)->getValue();
+            $parentId = getField("select id from emp where reg_no = '$reg_no'");
 
             $fileName = fopen($fLog, "a+");
 
