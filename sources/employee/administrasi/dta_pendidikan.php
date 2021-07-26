@@ -425,7 +425,7 @@ function lihat()
                 <?php
                     $filter = "WHERE t3.location IN ($areaCheck)";
                     if (!empty($par[filterData]))
-                        $filter .= " and (lower(t2.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t2.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
+                        $filter .= " and (lower(t2.name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(t2.reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
                     if (!empty($par[idLokasi]))
                         $filter .= " and t3.location = '$par[idLokasi]'";
                     if (!empty($par[idGroup]))
@@ -458,7 +458,7 @@ function lihat()
                         <td><?= $arrMaster[$r[edu_fac]] ?></td>
                         <td><?= $arrMaster[$r[edu_dept]] ?></td>
                         <td><?= $arrMaster[$r[edu_city]] ?></td>
-                        <td align="center"><?= $r[edu_year] ?></td>
+                        <td align="center"><?= $r[edu_graduate] ?></td>
                         <td align="center"><a href="download.php?d=empEdu&f=<?= $r[id] ?>"><img src=<?= getIcon($r[filename]) ?>></a></td>
                         <?= $control ?>
                     </tr>
@@ -507,7 +507,7 @@ function xls()
 
     $filter = "WHERE t3.location IN ($areaCheck)";
     if (!empty($par[filterData]))
-        $filter .= " and (lower(t2.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t2.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
+        $filter .= " and (lower(t2.name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(t2.reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
     if (!empty($par[idLokasi]))
         $filter .= " and t3.location = '$par[idLokasi]'";
     if (!empty($par[idGroup]))

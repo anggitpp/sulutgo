@@ -64,7 +64,7 @@ function setData()
         if (!in_array(trim(strtolower($dta[1])), array("", "ID"))) {
             $reg_no = $objPHPExcel->getActiveSheet()->getCell('B'.$tRow)->getValue();
             $parentId = getField("select id from emp where reg_no = '$reg_no'");
-
+            
             $fileName = fopen($fLog, "a+");
 
             $pos_name = $dta[4];
@@ -372,7 +372,7 @@ function lihat()
                 <?php
                     $filter = "WHERE t2.location IN ($areaCheck)";
                     if (!empty($par[filterData]))
-                        $filter .= " and (lower(t1.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t1.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
+                        $filter .= " and (lower(t1.name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(t1.reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
                     if (!empty($par[idLokasi]))
                         $filter .= " and t2.location = '$par[idLokasi]'";
                     if (!empty($par[idGroup]))

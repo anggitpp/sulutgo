@@ -818,7 +818,8 @@ function lihat()
                     }
                     $filter = "WHERE t1.status = '535' $filterCat $filterPensiun AND location IN($areaCheck)";
                     if (!empty($par[filterData]))
-                        $filter .= " and (lower(name) LIKE '%$par[filterData]%' OR lower(reg_no) LIKE '%$par[filterData]%' OR lower(pos_name) LIKE '%$par[filterData]%')";
+                        $filter .= " and (lower(name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' 
+                        OR lower(pos_name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
                     if (!empty($par[idLokasi]))
                         $filter .= " and t2.location = '$par[idLokasi]'";
                     if (!empty($par[idUnit]))

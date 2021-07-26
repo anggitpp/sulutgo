@@ -402,7 +402,7 @@ function lihat()
                 <?php
                     $filter = "WHERE t3.location IN ($areaCheck)";
                     if (!empty($par[filterData]))
-                        $filter .= " and (lower(t2.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t2.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
+                        $filter .= " and (lower(t2.name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(t2.reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
                     if (!empty($par[idLokasi]))
                         $filter .= " and t3.location = '$par[idLokasi]'";
                     if (!empty($par[idGroup]))
@@ -487,7 +487,7 @@ function xls()
 
     $filter = "WHERE t3.location IN ($areaCheck)";
     if (!empty($par[filterData]))
-        $filter .= " and (lower(t2.name) LIKE '%" . strtolower($par[filterData]) . "%' OR lower(t2.reg_no) LIKE '%" . strtolower($par[filterData]) . "%')";
+        $filter .= " and (lower(t2.name) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%' OR lower(t2.reg_no) LIKE '%".mysql_escape_string(strtolower($par[filterData]))."%')";
     if (!empty($par[idLokasi]))
         $filter .= " and t3.location = '$par[idLokasi]'";
     if (!empty($par[idGroup]))
