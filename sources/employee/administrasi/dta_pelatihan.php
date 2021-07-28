@@ -504,9 +504,9 @@ function xls()
         $r[gender] = $r[gender] == "F" ? "Perempuan" : "Laki-Laki";
         $data[] = array(
             $no . "\t center",
-            $r[kode] . "\t center",
+            $r[reg_no] . "\t center\t true",
             $r[name] . "\t left",
-            $r[reg_no] . "\t center",
+            $r[kode] . "\t center",
             $r[trn_no] . "\t left",
             $r[trn_subject] . "\t left",
             $r[trn_agency] . "\t left",

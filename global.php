@@ -1595,9 +1595,14 @@ function exportXLS($direktori = "files/export/", $namaFile, $judul, $totalField,
 
             $val = $dt[0];
             $align = str_replace(" ", "", $dt[1]);
+            $explicit = $dt[2];
 
             $no++;
-            $objPHPExcel->getActiveSheet()->setCellValue(columnXLS($no) . $rows, $val);
+            if(empty($explicit)) {
+                $objPHPExcel->getActiveSheet()->setCellValue(columnXLS($no) . $rows, $val);
+            }else{
+                $objPHPExcel->getActiveSheet()->setCellValueExplicit(columnXLS($no) . $rows, $val);
+            }
 
             if ($align == "left") $objPHPExcel->getActiveSheet()->getStyle(columnXLS($no) . $rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
             if ($align == "center") $objPHPExcel->getActiveSheet()->getStyle(columnXLS($no) . $rows)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
